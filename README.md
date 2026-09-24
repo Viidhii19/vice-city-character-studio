@@ -122,7 +122,7 @@ This project is a 100% client-side React SPA that builds into static assets in `
 
 ## 🚀 Live Demo
 
-- **Production URL**: [Add your live deployment link here]
+- **Production URL**: https://vice-city-character-studio.vercel.app/
 - **Submission Hashtag**: `#BuiltWithImageEditor`
 
 ---
@@ -134,7 +134,6 @@ Built for the **Unlayer Build with React Image Editor Challenge**.
 - **Challenge Post**: [LinkedIn Announcement](https://www.linkedin.com/posts/unlayer_builtwithimageeditor-activity-7501266371553452032-RB8U)
 - **Challenge FAQ**: [Notion FAQ Guide](https://unlayer.notion.site/Build-With-Image-Editor-Challenge-FAQ-3cf0ceb4c8e180309d91cd730811ebd1)
 - **React Image Editor**: [@unlayer/react-image-editor on npm](https://www.npmjs.com/package/@unlayer/react-image-editor)
-- **Submission Form**: Submit via the official Google / Notion form.
 
 ---
 
