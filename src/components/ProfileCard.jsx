@@ -97,13 +97,24 @@ export default function ProfileCard({ cardRef, character, editedImage }) {
       </div>
 
       {/* EDITED CHARACTER IMAGE (PRIMARY VISUAL) */}
-      <div className="relative z-10 aspect-square w-full rounded-2xl overflow-hidden mb-5 border-2 border-white/20 bg-black shadow-inner group">
-        <img
-          src={displayImage}
-          alt={character.name}
-          className="w-full h-full object-cover"
-          crossOrigin="anonymous"
-        />
+      <div className="relative z-10 aspect-square w-full rounded-2xl overflow-hidden mb-5 border-2 border-white/20 bg-[#07060d] shadow-inner group flex items-center justify-center">
+        {displayImage && (
+          <>
+            {/* Ambient blurred backdrop so any aspect ratio fills smoothly */}
+            <img
+              src={displayImage}
+              alt=""
+              aria-hidden="true"
+              className="absolute inset-0 w-full h-full object-cover blur-xl opacity-35 scale-110 pointer-events-none"
+            />
+            {/* Full character image: uncropped, centered, crisp */}
+            <img
+              src={displayImage}
+              alt={character.name}
+              className="relative z-10 max-w-full max-h-full w-auto h-full object-contain drop-shadow-xl"
+            />
+          </>
+        )}
 
         {/* Tactical Corner Crosshairs */}
         <div className="absolute top-2 left-2 w-4 h-4 border-t-2 border-l-2 border-[#00f0ff] pointer-events-none" />

@@ -125,15 +125,15 @@ export default function ExportProfileCard({ exportRef, character, editedImage })
         position: 'relative', zIndex: 2,
         width: '100%', height: '100%',
         display: 'flex', flexDirection: 'column',
-        padding: '72px 80px',
+        padding: '60px 80px',
         boxSizing: 'border-box',
-        gap: '40px',
+        gap: '32px',
       }}>
 
         {/* ── HEADER ── */}
         <div style={{
           display: 'flex', justifyContent: 'space-between', alignItems: 'center',
-          borderBottom: '1px solid rgba(255,255,255,0.12)', paddingBottom: '32px',
+          borderBottom: '1px solid rgba(255,255,255,0.12)', paddingBottom: '28px',
         }}>
           <div>
             <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '8px' }}>
@@ -170,18 +170,51 @@ export default function ExportProfileCard({ exportRef, character, editedImage })
 
         {/* ── MAIN IMAGE ── */}
         <div style={{
-          width: '100%', height: '580px', flexShrink: 0,
+          width: '100%', height: '640px', flexShrink: 0,
           borderRadius: '20px', overflow: 'hidden',
           border: '2px solid rgba(255,255,255,0.18)',
-          backgroundColor: '#000', position: 'relative',
+          backgroundColor: '#05040a', position: 'relative',
           boxShadow: `0 0 50px ${activePreset.glow}`,
+          display: 'flex', alignItems: 'center', justifyContent: 'center',
         }}>
           {displayImage && (
-            <img
-              src={displayImage}
-              alt={character.name}
-              style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
-            />
+            <>
+              {/* Atmospheric blurred backdrop to fill container dynamically */}
+              <img
+                src={displayImage}
+                alt=""
+                aria-hidden="true"
+                style={{
+                  position: 'absolute',
+                  inset: '-30px',
+                  width: 'calc(100% + 60px)',
+                  height: 'calc(100% + 60px)',
+                  objectFit: 'cover',
+                  objectPosition: 'center',
+                  filter: 'blur(32px) brightness(0.35) saturate(1.35)',
+                  transform: 'scale(1.1)',
+                  pointerEvents: 'none',
+                }}
+              />
+              {/* Full character visual - completely uncropped, head-to-toe visibility */}
+              <img
+                src={displayImage}
+                alt={character.name}
+                style={{
+                  position: 'relative',
+                  zIndex: 1,
+                  maxWidth: '100%',
+                  maxHeight: '100%',
+                  width: 'auto',
+                  height: '100%',
+                  objectFit: 'contain',
+                  objectPosition: 'center',
+                  display: 'block',
+                  margin: '0 auto',
+                  filter: 'drop-shadow(0 12px 36px rgba(0,0,0,0.85))',
+                }}
+              />
+            </>
           )}
           {/* Corner accent marks */}
           {[
@@ -190,28 +223,30 @@ export default function ExportProfileCard({ exportRef, character, editedImage })
             { bottom: 16, left: 16, borderBottom: '3px solid #ff2a85', borderLeft: '3px solid #ff2a85' },
             { bottom: 16, right: 16, borderBottom: '3px solid #ff2a85', borderRight: '3px solid #ff2a85' },
           ].map((s, i) => (
-            <div key={i} style={{ position: 'absolute', width: 20, height: 20, ...s }} />
+            <div key={i} style={{ position: 'absolute', zIndex: 2, width: 20, height: 20, ...s }} />
           ))}
           {/* Vibe badge */}
           <div style={{
-            position: 'absolute', top: 20, left: 20,
+            position: 'absolute', top: 20, left: 20, zIndex: 2,
             padding: '6px 16px', borderRadius: '8px',
             backgroundColor: `${activePreset.accent}25`,
             border: `1px solid ${activePreset.accent}60`,
             color: activePreset.accent,
             ...mono, fontWeight: 700, fontSize: '13px',
             letterSpacing: '3px', textTransform: 'uppercase',
+            backdropFilter: 'blur(8px)',
           }}>
             {activePreset.name}
           </div>
           {/* Watermark */}
           <div style={{
-            position: 'absolute', bottom: 16, right: 16,
+            position: 'absolute', bottom: 16, right: 16, zIndex: 2,
             padding: '4px 10px', borderRadius: '6px',
             backgroundColor: 'rgba(0,0,0,0.75)',
             border: '1px solid rgba(255,255,255,0.1)',
             ...mono, fontSize: '11px', color: 'rgba(255,255,255,0.6)',
             letterSpacing: '2px',
+            backdropFilter: 'blur(8px)',
           }}>
             VC // UNLAYER CERTIFIED
           </div>

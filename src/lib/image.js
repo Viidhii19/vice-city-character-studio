@@ -73,10 +73,11 @@ export async function ensureDataUrlWithVibe(imageSource, vibeId) {
     img.onload = () => {
       try {
         const canvas = document.createElement('canvas');
-        const targetWidth = 1200;
-        const targetHeight = 1600;
-        canvas.width = targetWidth;
-        canvas.height = targetHeight;
+        // Use image's natural dimensions to preserve 100% of the image without cropping
+        const imgWidth = img.naturalWidth || img.width || 1200;
+        const imgHeight = img.naturalHeight || img.height || 1600;
+        canvas.width = imgWidth;
+        canvas.height = imgHeight;
         const ctx = canvas.getContext('2d');
 
         if (!ctx) {
@@ -84,33 +85,12 @@ export async function ensureDataUrlWithVibe(imageSource, vibeId) {
           return;
         }
 
-        // Object-fit: cover math ensuring no stretching
-        const imgWidth = img.naturalWidth || img.width || targetWidth;
-        const imgHeight = img.naturalHeight || img.height || targetHeight;
-        const imgRatio = imgWidth / imgHeight;
-        const canvasRatio = targetWidth / targetHeight; // 0.75
-
-        let drawWidth, drawHeight, offsetX, offsetY;
-        if (imgRatio > canvasRatio) {
-          // Image wider than canvas -> match height, crop width
-          drawHeight = targetHeight;
-          drawWidth = imgWidth * (targetHeight / imgHeight);
-          offsetX = (targetWidth - drawWidth) / 2;
-          offsetY = 0;
-        } else {
-          // Image taller than canvas -> match width, crop height
-          drawWidth = targetWidth;
-          drawHeight = imgHeight * (targetWidth / imgWidth);
-          offsetX = 0;
-          offsetY = (targetHeight - drawHeight) / 2;
-        }
-
         // Apply custom 2D canvas context filter matching Vibe ID
         const filterStr = VIBE_FILTERS[vibeId] || 'none';
         ctx.filter = filterStr;
 
-        // Draw base image onto canvas
-        ctx.drawImage(img, offsetX, offsetY, drawWidth, drawHeight);
+        // Draw base image onto canvas preserving full image bounds
+        ctx.drawImage(img, 0, 0, imgWidth, imgHeight);
         ctx.filter = 'none';
 
         // Add subtle vignette and scanline overlays via Canvas 2D blend modes
@@ -118,21 +98,21 @@ export async function ensureDataUrlWithVibe(imageSource, vibeId) {
         ctx.globalCompositeOperation = 'overlay';
 
         // Vignette overlay
-        const maxRadius = Math.sqrt(Math.pow(targetWidth / 2, 2) + Math.pow(targetHeight / 2, 2));
+        const maxRadius = Math.sqrt(Math.pow(imgWidth / 2, 2) + Math.pow(imgHeight / 2, 2));
         const vignette = ctx.createRadialGradient(
-          targetWidth / 2, targetHeight / 2, targetWidth * 0.35,
-          targetWidth / 2, targetHeight / 2, maxRadius
+          imgWidth / 2, imgHeight / 2, Math.min(imgWidth, imgHeight) * 0.35,
+          imgWidth / 2, imgHeight / 2, maxRadius
         );
         vignette.addColorStop(0, 'rgba(0, 0, 0, 0)');
         vignette.addColorStop(0.65, 'rgba(0, 0, 0, 0.25)');
         vignette.addColorStop(1, 'rgba(0, 0, 0, 0.65)');
         ctx.fillStyle = vignette;
-        ctx.fillRect(0, 0, targetWidth, targetHeight);
+        ctx.fillRect(0, 0, imgWidth, imgHeight);
 
         // Scanlines overlay
         ctx.fillStyle = 'rgba(0, 0, 0, 0.08)';
-        for (let y = 0; y < targetHeight; y += 4) {
-          ctx.fillRect(0, y, targetWidth, 1.5);
+        for (let y = 0; y < imgHeight; y += 4) {
+          ctx.fillRect(0, y, imgWidth, 1.5);
         }
 
         ctx.restore();

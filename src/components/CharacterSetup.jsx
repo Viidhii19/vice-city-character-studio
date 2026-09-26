@@ -728,13 +728,21 @@ export default function CharacterSetup({ initialCharacter, onComplete, onBack })
               </div>
 
               {/* Image Preview with Cyber Frame */}
-              <div className="relative aspect-square rounded-xl overflow-hidden mb-4 border border-white/20 bg-black/60">
+              <div className="relative aspect-square rounded-xl overflow-hidden mb-4 border border-white/20 bg-black/60 flex items-center justify-center">
                 {character.image ? (
-                  <img
-                    src={character.image}
-                    alt={character.name || 'Character'}
-                    className="w-full h-full object-cover"
-                  />
+                  <>
+                    <img
+                      src={character.image}
+                      alt=""
+                      aria-hidden="true"
+                      className="absolute inset-0 w-full h-full object-cover blur-lg opacity-35 scale-110 pointer-events-none"
+                    />
+                    <img
+                      src={character.image}
+                      alt={character.name || 'Character'}
+                      className="relative z-10 max-w-full max-h-full w-auto h-full object-contain"
+                    />
+                  </>
                 ) : (
                   <div className="w-full h-full flex flex-col items-center justify-center text-white/30">
                     <User className="w-12 h-12 mb-2" />
