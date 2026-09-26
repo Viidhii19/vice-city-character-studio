@@ -214,3 +214,52 @@ body {
   background: rgba(0, 240, 255, 0.08);
   box-shadow: 0 0 15px rgba(0, 240, 255, 0.2);
 }
+
+/* Dossier Reveal Animation */
+@keyframes dossierReveal {
+  0% {
+    opacity: 0;
+    transform: translateY(16px) scale(0.98);
+    filter: brightness(1.2) contrast(1.1);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+    filter: brightness(1) contrast(1);
+  }
+}
+
+.animate-dossier-reveal {
+  animation: dossierReveal 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* Scan sweep on card reveal */
+@keyframes scanSweep {
+  0% {
+    top: -20%;
+    opacity: 0.8;
+  }
+  50% {
+    opacity: 0.4;
+  }
+  100% {
+    top: 120%;
+    opacity: 0;
+  }
+}
+
+.scan-sweep {
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 60px;
+  background: linear-gradient(180deg, transparent 0%, rgba(0, 240, 255, 0.25) 50%, transparent 100%);
+  pointer-events: none;
+  animation: scanSweep 1.2s cubic-bezier(0.2, 0.8, 0.2, 1) 0.1s forwards;
+}
+
+/* Atmospheric Glow Transition */
+.vibe-atmosphere {
+  transition: background-color 0.5s ease, border-color 0.5s ease, box-shadow 0.5s ease;
+}
+

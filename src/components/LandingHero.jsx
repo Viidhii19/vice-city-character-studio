@@ -1,5 +1,5 @@
 import React from 'react';
-import { Sparkles, ArrowRight, Zap, Palette, Shield, Flame, Car, Sliders, CheckCircle2 } from 'lucide-react';
+import { Sparkles, ArrowRight, Zap, Palette, Shield, Flame, Car, Sliders, Layers, Wand2, Download } from 'lucide-react';
 import { demoCharacters } from '../data/demoCharacters';
 
 export default function LandingHero({ onStart, onSelectDemo }) {
@@ -12,11 +12,11 @@ export default function LandingHero({ onStart, onSelectDemo }) {
           className="absolute inset-0 bg-cover bg-center opacity-40 mix-blend-screen scale-105 transition-transform duration-1000"
           style={{ backgroundImage: `url('/assets/backgrounds/hero-bg.jpg')` }}
         />
-        <div className="absolute inset-0 bg-gradient-to-t from-[#08070d] via-[#08070d]/70 to-[#08070d]/30" />
+        <div className="absolute inset-0 bg-gradient-to-t from-[#08070d] via-[#08070d]/75 to-[#08070d]/35" />
         <div className="absolute inset-0 cyber-grid opacity-30" />
         
         {/* Neon Ambient Light Orbs */}
-        <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-[#ff2a85]/20 rounded-full blur-[140px] pointer-events-none animate-pulse-glow" />
+        <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-[#ff2a85]/20 rounded-full blur-[140px] pointer-events-none" />
         <div className="absolute bottom-1/3 right-1/4 w-96 h-96 bg-[#00f0ff]/20 rounded-full blur-[140px] pointer-events-none" />
 
         {/* Ambient Palm & Coastal Silhouettes */}
@@ -30,13 +30,13 @@ export default function LandingHero({ onStart, onSelectDemo }) {
         </div>
       </div>
 
-      <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-20 flex flex-col items-center text-center">
+      <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-16 flex flex-col items-center text-center">
         
         {/* Challenge pill tag */}
-        <div className="inline-flex items-center gap-2.5 px-4 py-2 rounded-full glass-panel border border-[#ff2a85]/30 mb-8 animate-bounce">
-          <Sparkles className="w-4 h-4 text-[#ff2a85]" />
+        <div className="inline-flex items-center gap-2.5 px-4 py-2 rounded-full glass-panel border border-[#ff2a85]/40 mb-8 transition-all hover:border-[#ff2a85] shadow-lg">
+          <Sparkles className="w-4 h-4 text-[#ff2a85] animate-pulse" />
           <span className="text-xs font-mono tracking-widest text-[#f8f7fb] uppercase">
-            Unlayer React Image Editor Challenge
+            Unlayer React Image Editor Build Challenge
           </span>
           <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-[#ff2a85] text-white">
             #BuiltWithImageEditor
@@ -51,17 +51,35 @@ export default function LandingHero({ onStart, onSelectDemo }) {
           </span>
         </h1>
 
-        {/* Subtitle */}
-        <p className="font-sans text-lg sm:text-2xl text-white/70 max-w-2xl font-light mb-10 leading-relaxed">
-          Create a character. Customize the visual with <span className="text-[#00f0ff] font-medium">Unlayer Image Editor</span>. Own the night.
+        {/* Subtitle & Story Hook */}
+        <p className="font-sans text-lg sm:text-xl text-white/80 max-w-2xl font-light mb-8 leading-relaxed">
+          Build your identity. Choose your vibe. Shape your story. Style your portrait in <span className="text-[#00f0ff] font-medium">Unlayer Image Editor</span> and generate a classified underworld dossier.
         </p>
 
+        {/* 3-Step Creation Journey Pipeline */}
+        <div className="flex flex-wrap items-center justify-center gap-2 sm:gap-3 mb-10 max-w-2xl">
+          <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-white/5 border border-white/10 text-xs font-mono text-white/70">
+            <Layers className="w-3.5 h-3.5 text-[#ff2a85]" />
+            <span>01. CUSTOMIZE IDENTITY</span>
+          </div>
+          <span className="text-white/30 text-xs">→</span>
+          <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-white/5 border border-[#00f0ff]/30 text-xs font-mono text-[#00f0ff]">
+            <Wand2 className="w-3.5 h-3.5 text-[#00f0ff]" />
+            <span>02. UNLAYER STUDIO</span>
+          </div>
+          <span className="text-white/30 text-xs">→</span>
+          <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-white/5 border border-[#00ff88]/30 text-xs font-mono text-[#00ff88]">
+            <Download className="w-3.5 h-3.5 text-[#00ff88]" />
+            <span>03. 1200×1600 DOSSIER</span>
+          </div>
+        </div>
+
         {/* CTA Buttons */}
-        <div className="flex flex-col sm:flex-row items-center gap-4 mb-16 w-full sm:w-auto">
+        <div className="flex flex-col sm:flex-row items-center gap-4 mb-4 w-full sm:w-auto">
           <button
             id="cta-create-character"
             onClick={onStart}
-            className="w-full sm:w-auto px-8 py-4 rounded-xl btn-vice-primary font-syne font-bold text-base tracking-wider uppercase text-white shadow-neon-pink flex items-center justify-center gap-3 group"
+            className="w-full sm:w-auto px-9 py-4 rounded-xl btn-vice-primary font-syne font-bold text-base tracking-wider uppercase text-white shadow-neon-pink flex items-center justify-center gap-3 group"
           >
             <span>CREATE YOUR CHARACTER</span>
             <ArrowRight className="w-5 h-5 group-hover:translate-x-1.5 transition-transform" />
@@ -72,23 +90,27 @@ export default function LandingHero({ onStart, onSelectDemo }) {
             className="w-full sm:w-auto px-8 py-4 rounded-xl btn-vice-outline font-syne font-semibold text-base tracking-wider uppercase text-white/90 flex items-center justify-center gap-2"
           >
             <Zap className="w-4 h-4 text-[#00f0ff]" />
-            <span>EXPLORE THE STUDIO</span>
+            <span>INSTANT ROSTER</span>
           </a>
         </div>
+
+        <p className="text-[11px] font-mono text-white/40 mb-14">
+          100% Client-Side • Powered by @unlayer/react-image-editor • High-Res PNG Export
+        </p>
 
         {/* Feature Highlights Grid */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 w-full max-w-4xl mb-16">
           {[
-            { title: "Real Image Editor", desc: "Powered by @unlayer/react-image-editor", icon: Palette, color: "text-[#00f0ff]" },
-            { title: "GTA VI Lifestyle", desc: "Jet ski, delis, gyms, and night cruises", icon: Car, color: "text-[#ff2a85]" },
-            { title: "Custom Presets", desc: "Neon Nights, Ocean Drive, Downtown Heat", icon: Sliders, color: "text-[#ffd000]" },
-            { title: "High-Res Export", desc: "Downloadable street profile dossier", icon: Shield, color: "text-[#00ff88]" },
+            { title: "Real Image Editor", desc: "Powered by @unlayer/react-image-editor: crop, filters, typography, frames", icon: Palette, color: "text-[#00f0ff]" },
+            { title: "GTA VI Lifestyle", desc: "Biscayne jet skis, Little Havana delis, Muscle Beach, night cruises", icon: Car, color: "text-[#ff2a85]" },
+            { title: "Dynamic Vibe Engine", desc: "Neon Nights, Ocean Drive, Downtown Heat, After Dark palettes", icon: Sliders, color: "text-[#ffd000]" },
+            { title: "1200×1600 High-Res", desc: "Deterministic export with zero clipping or layout shifts", icon: Shield, color: "text-[#00ff88]" },
           ].map((item, idx) => {
             const Icon = item.icon;
             return (
               <div 
                 key={idx}
-                className="glass-panel p-4 rounded-xl text-left border border-white/10 hover:border-white/20 transition-all hover:-translate-y-1"
+                className="glass-panel p-4 rounded-xl text-left border border-white/10 hover:border-white/25 transition-all hover:-translate-y-1 shadow-sm"
               >
                 <Icon className={`w-6 h-6 ${item.color} mb-2`} />
                 <h2 className="font-syne font-bold text-sm text-white">{item.title}</h2>
@@ -99,7 +121,7 @@ export default function LandingHero({ onStart, onSelectDemo }) {
         </div>
 
         {/* Demo Starters Showcase */}
-        <div id="demo-showcase" className="w-full max-w-5xl mt-6 pt-10 border-t border-white/10">
+        <div id="demo-showcase" className="w-full max-w-5xl mt-4 pt-10 border-t border-white/10">
           <div className="flex flex-col sm:flex-row items-center justify-between mb-8">
             <div className="text-left mb-4 sm:mb-0">
               <span className="text-xs font-mono text-[#00f0ff] uppercase tracking-widest">
@@ -110,7 +132,7 @@ export default function LandingHero({ onStart, onSelectDemo }) {
               </h2>
             </div>
             <p className="text-xs text-white/50 max-w-xs text-right hidden sm:block">
-              Jump directly into the Unlayer Editor with pre-configured identities
+              Jump directly into the Unlayer Editor with pre-configured operative profiles
             </p>
           </div>
 
@@ -119,7 +141,7 @@ export default function LandingHero({ onStart, onSelectDemo }) {
               <div
                 key={char.id}
                 onClick={() => onSelectDemo(char)}
-                className="group relative rounded-2xl overflow-hidden glass-panel border border-white/10 hover:border-[#ff2a85] transition-all duration-300 hover:-translate-y-2 cursor-pointer shadow-glass hover:shadow-neon-pink"
+                className="group relative rounded-2xl overflow-hidden glass-panel border border-white/10 hover:border-[#ff2a85] transition-all duration-300 hover:-translate-y-2 cursor-pointer shadow-glass hover:shadow-neon-pink text-left"
               >
                 {/* Character Image */}
                 <div className="relative aspect-square overflow-hidden bg-[#11101a]">
@@ -146,7 +168,7 @@ export default function LandingHero({ onStart, onSelectDemo }) {
                 </div>
 
                 {/* Character Info */}
-                <div className="p-4 text-left">
+                <div className="p-4">
                   <h3 className="font-syne font-bold text-lg text-white group-hover:text-[#ff2a85] transition-colors truncate">
                     {char.name}
                   </h3>
@@ -156,10 +178,10 @@ export default function LandingHero({ onStart, onSelectDemo }) {
                   
                   <div className="mt-4 pt-3 border-t border-white/10 flex items-center justify-between">
                     <span className="text-[11px] font-mono text-white/60">
-                      CASH <span className="text-[#00ff88] font-bold">${char.cash.toLocaleString()}</span>
+                      BOUNTY <span className="text-[#00ff88] font-bold">${(char.cash / 1000).toFixed(0)}K</span>
                     </span>
                     <span className="text-xs font-syne font-bold text-[#00f0ff] group-hover:translate-x-1 transition-transform flex items-center gap-1">
-                      Customize →
+                      Edit Visual →
                     </span>
                   </div>
                 </div>
@@ -180,3 +202,4 @@ export default function LandingHero({ onStart, onSelectDemo }) {
     </div>
   );
 }
+

@@ -62,6 +62,17 @@ export default function ExportProfileCard({ exportRef, character, editedImage })
   const displayImage = resolvedImage || editedImage || character.image;
   const heatStars = Array.from({ length: 5 }, (_, i) => i < character.heat);
 
+  // Stable deterministic dossier serial matching ProfileCard
+  const stableSerial = React.useMemo(() => {
+    let hash = 0;
+    const str = `${character.name || 'citizen'}-${character.alias || 'ghost'}-${character.role || 'operative'}`;
+    for (let i = 0; i < str.length; i++) {
+      hash = ((hash << 5) - hash) + str.charCodeAt(i);
+      hash |= 0;
+    }
+    return Math.abs(hash % 9000) + 1000;
+  }, [character.name, character.alias, character.role]);
+
   // --- Shared inline style helpers ---
   const mono = { fontFamily: 'monospace' };
   const syne = { fontFamily: "'Syne', 'Outfit', 'Inter', sans-serif" };
@@ -143,7 +154,7 @@ export default function ExportProfileCard({ exportRef, character, editedImage })
               #BuiltWithImageEditor
             </div>
             <div style={{ ...mono, fontSize: '11px', color: 'rgba(255,255,255,0.35)', display: 'block' }}>
-              VICECITY-2026
+              SER: VC-{stableSerial}
             </div>
           </div>
         </div>
@@ -252,8 +263,11 @@ export default function ExportProfileCard({ exportRef, character, editedImage })
             <div style={{
               ...mono, fontSize: '12px', color: 'rgba(255,255,255,0.4)',
               textTransform: 'uppercase', letterSpacing: '3px', marginBottom: '8px',
+              display: 'flex', alignItems: 'center', gap: '8px',
             }}>
-              TONIGHT'S ROUTE
+              <span>TONIGHT'S ROUTE</span>
+              <span style={{ color: 'rgba(255,255,255,0.2)' }}>•</span>
+              <span style={{ color: activePreset.accent }}>{activeActivity.when ? activeActivity.when.split('//')[0].trim() : 'MIDNIGHT'}</span>
             </div>
             <div style={{ ...syne, fontWeight: 700, fontSize: '26px', color: '#ffffff' }}>
               {activeActivity.title}

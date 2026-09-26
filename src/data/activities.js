@@ -8,6 +8,9 @@ export const activities = [
     icon: "Waves",
     vibeBonus: "+15 Speed Cred",
     location: "South Beach Marina",
+    when: "05:45 PM // Golden Twilight",
+    mood: "High Adrenaline",
+    energy: "95% High Octane",
     gradient: "from-cyan-500/20 to-blue-600/30",
     borderGlow: "group-hover:border-cyan-400"
   },
@@ -20,6 +23,9 @@ export const activities = [
     icon: "Coffee",
     vibeBonus: "+10 Intel",
     location: "Little Havana Deli",
+    when: "01:30 PM // Midday Heat",
+    mood: "Covert Intel",
+    energy: "60% Low Key",
     gradient: "from-amber-500/20 to-orange-600/30",
     borderGlow: "group-hover:border-amber-400"
   },
@@ -32,6 +38,9 @@ export const activities = [
     icon: "Dumbbell",
     vibeBonus: "+20 Endurance",
     location: "Lummus Muscle Beach",
+    when: "07:00 AM // Dawn Grit",
+    mood: "Pure Discipline",
+    energy: "85% Relentless",
     gradient: "from-rose-500/20 to-red-600/30",
     borderGlow: "group-hover:border-rose-400"
   },
@@ -44,6 +53,9 @@ export const activities = [
     icon: "Car",
     vibeBonus: "+25 Style Points",
     location: "Ocean Drive Boulevard",
+    when: "02:15 AM // Midnight Peak",
+    mood: "Synthwave Flow",
+    energy: "80% Fluid Motion",
     gradient: "from-pink-500/20 to-purple-600/30",
     borderGlow: "group-hover:border-pink-400"
   },
@@ -56,7 +68,11 @@ export const activities = [
     icon: "Anchor",
     vibeBonus: "+30 Underworld Rep",
     location: "Vice Port Pier 42",
+    when: "03:45 AM // Dead of Night",
+    mood: "High Stakes",
+    energy: "90% Tactical",
     gradient: "from-purple-500/20 to-indigo-600/30",
     borderGlow: "group-hover:border-purple-400"
   }
 ];
+

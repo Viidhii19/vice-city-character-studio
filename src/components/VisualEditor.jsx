@@ -47,26 +47,29 @@ export default function VisualEditor({ character, onSave, onCancel }) {
 
   const handleEditorSave = ({ dataUrl, blob }) => {
     setIsSaving(true);
-    onSave({ dataUrl, blob });
+    setTimeout(() => {
+      onSave({ dataUrl, blob });
+    }, 450);
   };
 
   const handleManualSave = () => {
     try {
       setIsSaving(true);
+      let targetUrl = preparedImage || character.image;
       if (editorRef.current && editorRef.current.editor) {
         const dataUrl = editorRef.current.editor.getImage();
         if (dataUrl) {
-          onSave({ dataUrl });
-          return;
+          targetUrl = dataUrl;
         }
       }
-      // If getImage() returned null or wasn't available, we fallback to preparedImage / character.image
-      onSave({ dataUrl: preparedImage || character.image });
+      setTimeout(() => {
+        onSave({ dataUrl: targetUrl });
+      }, 450);
     } catch (err) {
       console.error('Error during manual save:', err);
-      onSave({ dataUrl: preparedImage || character.image });
-    } finally {
-      setIsSaving(false);
+      setTimeout(() => {
+        onSave({ dataUrl: preparedImage || character.image });
+      }, 450);
     }
   };
 
@@ -83,6 +86,32 @@ export default function VisualEditor({ character, onSave, onCancel }) {
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-4">
       
+      {/* Studio Mission Intro Banner */}
+      <div className="glass-panel p-4 rounded-2xl border border-white/10 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs">
+        <div className="flex items-center gap-3">
+          <div className="p-2 rounded-xl bg-[#00f0ff]/10 border border-[#00f0ff]/30 text-[#00f0ff] shrink-0">
+            <Sparkles className="w-5 h-5 animate-pulse" />
+          </div>
+          <div>
+            <div className="font-syne font-bold text-sm text-white flex items-center gap-2">
+              <span>VISUAL STUDIO // YOUR PORTRAIT. YOUR STYLE. YOUR RULES.</span>
+            </div>
+            <p className="text-white/60 font-mono text-[11px] mt-0.5">
+              Crop, color-grade, draw, add text or stickers to your operative's visual before compiling your official dossier.
+            </p>
+          </div>
+        </div>
+
+        <div className="flex items-center gap-2 self-start sm:self-auto shrink-0 font-mono text-[10px]">
+          <span className="px-2.5 py-1 rounded-md bg-white/5 border border-white/10 text-white/70">
+            NATIVE TOOLS ACTIVE
+          </span>
+          <span className="px-2.5 py-1 rounded-md bg-[#ff2a85]/15 border border-[#ff2a85]/30 text-[#ff5ea7] font-bold">
+            #BuiltWithImageEditor
+          </span>
+        </div>
+      </div>
+
       {/* Top HUD Bar */}
       <div className="glass-panel p-4 rounded-2xl border border-white/10 flex flex-col md:flex-row md:items-center justify-between gap-4">
         
@@ -116,7 +145,7 @@ export default function VisualEditor({ character, onSave, onCancel }) {
               <span className="text-white/20">•</span>
               <span className="text-[#00ff88] flex items-center gap-1">
                 <span className="w-1.5 h-1.5 rounded-full bg-[#00ff88] animate-pulse" />
-                WORKSPACE ACTIVE
+                CANVAS READY
               </span>
             </div>
           </div>
@@ -142,7 +171,7 @@ export default function VisualEditor({ character, onSave, onCancel }) {
             {isSaving ? (
               <>
                 <div className="w-3.5 h-3.5 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                <span>SAVING...</span>
+                <span>COMPILING DOSSIER...</span>
               </>
             ) : (
               <>
@@ -162,6 +191,25 @@ export default function VisualEditor({ character, onSave, onCancel }) {
         <div className="absolute top-2 left-2 z-20 pointer-events-none text-[10px] font-mono text-[#00f0ff]/80 bg-black/70 px-2 py-0.5 rounded border border-white/10">
           HUD // UNLAYER CANVAS 1080P
         </div>
+
+        {/* High-Tech Compiling State Overlay */}
+        {isSaving && (
+          <div className="absolute inset-0 z-30 flex flex-col items-center justify-center bg-[#0b0a12]/95 backdrop-blur-md text-white space-y-4">
+            <div className="relative w-16 h-16">
+              <div className="absolute inset-0 rounded-full border-2 border-white/10" />
+              <div className="absolute inset-0 rounded-full border-2 border-[#ff2a85] border-t-transparent animate-spin" />
+              <div className="absolute inset-2 rounded-full border-2 border-[#00f0ff] border-b-transparent animate-spin" style={{ animationDirection: 'reverse', animationDuration: '1.2s' }} />
+            </div>
+            <div className="text-center space-y-1">
+              <p className="font-mono text-sm font-bold uppercase tracking-widest text-[#00f0ff]">
+                COMPILING VISUAL IDENTITY...
+              </p>
+              <p className="text-xs font-mono text-white/60">
+                Encoding canvas pixels • Finalizing operative dossier
+              </p>
+            </div>
+          </div>
+        )}
 
         {/* Loading Visual Indicator */}
         {(preparingImage || (!editorLoaded && !editorError)) && (

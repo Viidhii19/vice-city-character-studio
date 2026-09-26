@@ -121,8 +121,9 @@ export default function FinalResultScreen({ character, editedImage, onEditAgain,
       {/* Main Content Layout */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
         
-        {/* Left Column: The Profile Card (visible / responsive) */}
-        <div className="lg:col-span-7 flex justify-center">
+        {/* Left Column: The Profile Card (visible / responsive with reveal animation) */}
+        <div className="lg:col-span-7 flex justify-center relative animate-dossier-reveal">
+          <div className="scan-sweep" />
           <ProfileCard
             cardRef={cardRef}
             character={character}
@@ -145,12 +146,12 @@ export default function FinalResultScreen({ character, editedImage, onEditAgain,
               id="btn-download-profile"
               onClick={handleDownload}
               disabled={downloading}
-              className="w-full py-4 rounded-xl btn-vice-primary font-syne font-bold text-sm tracking-wider uppercase text-white shadow-neon-pink flex items-center justify-center gap-2 transition-all group"
+              className="w-full py-4 rounded-xl btn-vice-primary font-syne font-bold text-sm tracking-wider uppercase text-white shadow-neon-pink flex items-center justify-center gap-2.5 transition-all group"
             >
               {downloading ? (
                 <>
                   <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                  <span>EXPORTING HIGH-RES PNG...</span>
+                  <span>EXPORTING 1200×1600 HIGH-RES PNG...</span>
                 </>
               ) : downloadSuccess ? (
                 <>
@@ -166,8 +167,8 @@ export default function FinalResultScreen({ character, editedImage, onEditAgain,
             </button>
 
             {/* Note about export quality */}
-            <p className="text-[10px] font-mono text-white/30 text-center -mt-2">
-              Full 1200×1600px high-res export — complete card, no clipping
+            <p className="text-[10px] font-mono text-white/40 text-center -mt-2">
+              Full 1200×1600px high-res export • 100% complete card • No clipping
             </p>
 
             {/* In-UI Export Error Notice */}

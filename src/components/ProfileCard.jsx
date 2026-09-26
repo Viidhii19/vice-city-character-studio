@@ -36,6 +36,17 @@ export default function ProfileCard({ cardRef, character, editedImage }) {
   // Visual image: prioritize edited image returned by Unlayer
   const displayImage = editedImage || character.image;
 
+  // Stable deterministic dossier serial
+  const stableSerial = React.useMemo(() => {
+    let hash = 0;
+    const str = `${character.name || 'citizen'}-${character.alias || 'ghost'}-${character.role || 'operative'}`;
+    for (let i = 0; i < str.length; i++) {
+      hash = ((hash << 5) - hash) + str.charCodeAt(i);
+      hash |= 0;
+    }
+    return Math.abs(hash % 9000) + 1000;
+  }, [character.name, character.alias, character.role]);
+
   return (
     <div
       ref={cardRef}
@@ -77,7 +88,7 @@ export default function ProfileCard({ cardRef, character, editedImage }) {
           <span className="text-[9px] font-mono font-bold px-2 py-0.5 rounded-full bg-[#00f0ff]/15 text-[#00f0ff] border border-[#00f0ff]/30">
             #BuiltWithImageEditor
           </span>
-          <p className="text-[9px] font-mono text-white/40 mt-1">SER: VC-{Math.floor(Math.random() * 8999 + 1000)}</p>
+          <p className="text-[9px] font-mono text-white/40 mt-1">SER: VC-{stableSerial}</p>
         </div>
       </div>
 
@@ -116,7 +127,7 @@ export default function ProfileCard({ cardRef, character, editedImage }) {
             <span className="text-[10px] font-mono text-[#00f0ff] tracking-widest uppercase">
               REGISTERED IDENTITY
             </span>
-            <span className="text-[10px] font-mono text-white/40">ID: 804-922</span>
+            <span className="text-[10px] font-mono text-white/40">SEC: LEVEL 4</span>
           </div>
 
           <h2 className="font-display font-black text-2xl sm:text-3xl text-white uppercase tracking-tight truncate leading-none mt-1">
@@ -136,15 +147,17 @@ export default function ProfileCard({ cardRef, character, editedImage }) {
           </div>
         </div>
 
-      {/* LIFESTYLE / TONIGHT'S ROUTE */}
+        {/* LIFESTYLE / TONIGHT'S ROUTE */}
         <div className="p-3 rounded-xl border flex items-center justify-between" style={{ backgroundColor: `${activePreset.accent}10`, borderColor: `${activePreset.accent}30` }}>
           <div className="flex items-center gap-2.5">
             <div className="p-1.5 rounded-lg bg-white/10" style={{ color: activePreset.accent }}>
               <ActivityIcon className="w-4 h-4" />
             </div>
             <div>
-              <div className="text-[9px] font-mono text-white/50 uppercase tracking-wider">
-                TONIGHT'S ROUTE
+              <div className="text-[9px] font-mono text-white/50 uppercase tracking-wider flex items-center gap-1.5">
+                <span>TONIGHT'S ROUTE</span>
+                <span className="text-white/30">•</span>
+                <span className="text-[#00f0ff]">{activeActivity.when ? activeActivity.when.split('//')[0].trim() : 'MIDNIGHT'}</span>
               </div>
               <div className="text-xs font-syne font-bold text-white">
                 {activeActivity.title}

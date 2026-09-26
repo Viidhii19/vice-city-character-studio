@@ -3,7 +3,8 @@ import {
   User, Sparkles, Upload, ArrowRight, Shield, Flame, 
   Coins, MapPin, Check, AlertCircle, RefreshCw, Wand2,
   Terminal, Gauge, Briefcase, Camera, Ship, Crosshair,
-  Waves, Coffee, Dumbbell, Car, Anchor, Dice5
+  Waves, Coffee, Dumbbell, Car, Anchor, Dice5,
+  Clock, Zap, Activity
 } from 'lucide-react';
 import { roles } from '../data/roles';
 import { presets } from '../data/presets';
@@ -114,8 +115,18 @@ export default function CharacterSetup({ initialCharacter, onComplete, onBack })
   };
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+    <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 transition-colors duration-500">
       
+      {/* Dynamic Vibe Ambient Light Orbs */}
+      <div 
+        className="absolute top-10 left-1/4 w-[480px] h-[480px] rounded-full blur-[140px] pointer-events-none transition-all duration-700 -z-10"
+        style={{ backgroundColor: selectedPreset.accent, opacity: 0.15 }}
+      />
+      <div 
+        className="absolute bottom-10 right-1/4 w-[400px] h-[400px] rounded-full blur-[140px] pointer-events-none transition-all duration-700 -z-10"
+        style={{ backgroundColor: selectedPreset.secondary, opacity: 0.12 }}
+      />
+
       {/* Top Header */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8 pb-6 border-b border-white/10">
         <div>
@@ -128,28 +139,33 @@ export default function CharacterSetup({ initialCharacter, onComplete, onBack })
           </h1>
         </div>
         
-        {/* Tab Switcher */}
+        {/* Tab Switcher with Progress Feedback */}
         <div className="flex items-center gap-1.5 p-1 rounded-xl bg-white/5 border border-white/10 overflow-x-auto">
           {[
-            { id: 'identity', label: '1. Identity' },
-            { id: 'vibe', label: '2. Vibe' },
-            { id: 'lifestyle', label: '3. Lifestyle' },
-            { id: 'visual', label: '4. Visual Asset' },
-          ].map((tab) => (
-            <button
-              key={tab.id}
-              onClick={() => setActiveTab(tab.id)}
-              className={`px-3.5 py-2 rounded-lg text-xs font-mono font-semibold transition-all whitespace-nowrap ${
-                activeTab === tab.id
-                  ? 'bg-gradient-to-r from-[#ff2a85] to-[#8a2be2] text-white shadow-neon-pink'
-                  : 'text-white/60 hover:text-white hover:bg-white/5'
-              }`}
-            >
-              {tab.label}
-            </button>
-          ))}
+            { id: 'identity', label: '1. Identity', isDone: Boolean(character.name.trim()) },
+            { id: 'vibe', label: '2. Vibe', isDone: Boolean(character.preset) },
+            { id: 'lifestyle', label: '3. Lifestyle', isDone: Boolean(character.activity) },
+            { id: 'visual', label: '4. Visual Asset', isDone: Boolean(character.image) },
+          ].map((tab) => {
+            const isActive = activeTab === tab.id;
+            return (
+              <button
+                key={tab.id}
+                onClick={() => setActiveTab(tab.id)}
+                className={`px-3.5 py-2 rounded-lg text-xs font-mono font-semibold transition-all whitespace-nowrap flex items-center gap-1.5 ${
+                  isActive
+                    ? 'bg-gradient-to-r from-[#ff2a85] to-[#8a2be2] text-white shadow-neon-pink'
+                    : 'text-white/60 hover:text-white hover:bg-white/5'
+                }`}
+              >
+                {tab.isDone && !isActive && <span className="w-1.5 h-1.5 rounded-full bg-[#00ff88]" />}
+                <span>{tab.label}</span>
+              </button>
+            );
+          })}
         </div>
       </div>
+
 
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
         
@@ -479,11 +495,11 @@ export default function CharacterSetup({ initialCharacter, onComplete, onBack })
                       }`}
                     >
                       <div className="flex items-start sm:items-center gap-3.5">
-                        <div className={`p-2.5 rounded-xl ${isSelected ? 'bg-[#ff2a85] text-white' : 'bg-white/10 text-white/70 group-hover:text-white'}`}>
+                        <div className={`p-2.5 rounded-xl shrink-0 ${isSelected ? 'bg-[#ff2a85] text-white shadow-neon-pink' : 'bg-white/10 text-white/70 group-hover:text-white'}`}>
                           <Icon className="w-5 h-5" />
                         </div>
-                        <div>
-                          <div className="flex items-center gap-2">
+                        <div className="space-y-1.5">
+                          <div className="flex items-center gap-2 flex-wrap">
                             <h3 className="font-syne font-bold text-sm text-white group-hover:text-[#ff2a85] transition-colors">
                               {act.title}
                             </h3>
@@ -491,9 +507,24 @@ export default function CharacterSetup({ initialCharacter, onComplete, onBack })
                               {act.badge}
                             </span>
                           </div>
-                          <p className="text-xs text-white/60 mt-0.5 leading-snug">
+                          <p className="text-xs text-white/60 leading-snug">
                             {act.description}
                           </p>
+                          {/* Tactical Meta Badges: WHERE, WHEN, MOOD, ENERGY */}
+                          <div className="flex items-center gap-2 pt-0.5 flex-wrap text-[10px] font-mono">
+                            <span className="px-2 py-0.5 rounded bg-white/5 border border-white/10 text-white/70 flex items-center gap-1">
+                              <Clock className="w-2.5 h-2.5 text-[#00f0ff]" />
+                              {act.when}
+                            </span>
+                            <span className="px-2 py-0.5 rounded bg-white/5 border border-white/10 text-amber-400/90 flex items-center gap-1">
+                              <Zap className="w-2.5 h-2.5 text-amber-400" />
+                              {act.mood}
+                            </span>
+                            <span className="px-2 py-0.5 rounded bg-white/5 border border-white/10 text-[#ff2a85] flex items-center gap-1">
+                              <Activity className="w-2.5 h-2.5 text-[#ff2a85]" />
+                              {act.energy}
+                            </span>
+                          </div>
                         </div>
                       </div>
 
@@ -501,8 +532,8 @@ export default function CharacterSetup({ initialCharacter, onComplete, onBack })
                         <span className="text-[11px] font-mono font-bold text-[#00ff88]">
                           {act.vibeBonus}
                         </span>
-                        <span className="text-[10px] font-mono text-white/40 flex items-center gap-1">
-                          <MapPin className="w-3 h-3" />
+                        <span className="text-[10px] font-mono text-white/40 flex items-center gap-1 mt-1">
+                          <MapPin className="w-3 h-3 text-[#00f0ff]" />
                           {act.location}
                         </span>
                       </div>
@@ -633,6 +664,9 @@ export default function CharacterSetup({ initialCharacter, onComplete, onBack })
                     );
                   })}
                 </div>
+                <p className="text-[10px] font-mono text-white/40 mt-2 text-center">
+                  ✓ Selecting a portrait preserves your configured name, role, stats, and route.
+                </p>
               </div>
 
               {/* Ready to Edit CTA */}
@@ -667,7 +701,14 @@ export default function CharacterSetup({ initialCharacter, onComplete, onBack })
             </div>
 
             {/* Tactical Card Shell */}
-            <div className="glass-panel-elevated rounded-2xl overflow-hidden border border-white/15 p-5 relative hud-corner-tl hud-corner-br">
+            <div 
+              className="glass-panel-elevated rounded-2xl overflow-hidden border p-5 relative hud-corner-tl hud-corner-br transition-all duration-300"
+              style={{
+                borderColor: `${selectedPreset.accent}45`,
+                boxShadow: `0 16px 40px rgba(0, 0, 0, 0.7), 0 0 25px ${selectedPreset.glow}`,
+              }}
+            >
+
               
               {/* Header inside card */}
               <div className="flex items-center justify-between pb-3 mb-3 border-b border-white/10">
