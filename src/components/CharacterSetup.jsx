@@ -11,6 +11,7 @@ import { presets } from '../data/presets';
 import { activities } from '../data/activities';
 import { demoCharacters } from '../data/demoCharacters';
 import { validateImageFile, generateRandomIdentity } from '../lib/image';
+import { computeIdentityDNA } from '../lib/identity';
 
 export default function CharacterSetup({ initialCharacter, onComplete, onBack }) {
   const [character, setCharacter] = useState({
@@ -804,6 +805,23 @@ export default function CharacterSetup({ initialCharacter, onComplete, onBack })
                   <div className="p-2 rounded-lg bg-white/5 border border-white/5">
                     <div className="text-[10px] text-white/50">BOUNTY</div>
                     <div className="text-sm font-bold text-[#00ff88]">${(character.cash / 1000).toFixed(0)}K</div>
+                  </div>
+                </div>
+
+                {/* Identity DNA — compound archetype from vibe + activity */}
+                <div
+                  className="p-2.5 rounded-xl border text-center transition-all duration-500 mt-2"
+                  style={{
+                    borderColor: `${selectedPreset.accent}40`,
+                    backgroundColor: `${selectedPreset.accent}10`,
+                  }}
+                >
+                  <div className="text-[9px] font-mono text-white/40 uppercase tracking-[0.2em] mb-1">COMPILED IDENTITY</div>
+                  <div
+                    className="font-syne font-black text-sm uppercase tracking-wider transition-colors duration-500"
+                    style={{ color: selectedPreset.accent }}
+                  >
+                    {computeIdentityDNA(character.preset, character.activity)}
                   </div>
                 </div>
 

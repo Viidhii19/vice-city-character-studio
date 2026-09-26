@@ -7,24 +7,27 @@
 
 **Vice City Character Studio** is an original GTA VI-inspired character customization web experience built for the **Unlayer Build with React Image Editor Challenge**. 
 
-Create your neon Vice City underworld identity, customize your character portrait with the official **Unlayer React Image Editor** using authentic canvas tools (filters, crop, text, stickers, shapes, frames), choose your signature lifestyle activity, and export a high-resolution, unclipped street dossier poster card.
+Create your neon Vice City underworld identity, watch your chosen Vibe physically grade your operative's portrait via an off-screen HTML5 Canvas pre-processing pipeline, customize the visual with the official **Unlayer React Image Editor** using authentic canvas tools (filters, crop, text, stickers, shapes, frames), experience a cinematic compilation sequence, and export a high-resolution 1200×1600px unclipped street dossier card.
 
 ---
 
 ## ⚡ Core Features
 
 - 🌆 **Cinematic Vice City Aesthetics**: Immersive synthwave dark mode, CRT scanlines, animated neon glows, glassmorphic HUD panels, and dynamic typography.
-- 🎨 **Real Unlayer Image Editor Integration**: Powered directly by `@unlayer/react-image-editor`. No fake tools or mock buttons—real cropping, resizing, color grading, text layers, stickers, and decorative frames.
+- 🔮 **Visual Causality & Pixel Transformation**: User choices do not merely toggle metadata. Selecting a Vibe preset physically grades the image pixels on an off-screen 1200×1600 canvas (with custom 2D context filters, vignette, and scanlines) before mounting into Unlayer.
+- 🎨 **Real Unlayer Image Editor Integration**: Powered directly by `@unlayer/react-image-editor`. No mock tools—real cropping, resizing, color grading, text layers, stickers, and decorative frames with a live tri-state HUD indicator (`PREPARING IMAGE...` $\rightarrow$ `LOADING CANVAS...` $\rightarrow$ `CANVAS READY`).
+- 🧬 **Identity DNA Engine**: Pairing your Vibe with your Lifestyle Route deterministically produces one of 30 unique underworld archetypes (*Chrome Phantom, Cyber Noir Runner, Wave Runner, Harbor Enforcer, etc.*) alongside a stable verification serial (`VC-XXXX`).
 - 🕶️ **Character Identity & Underworld Roles**: Choose from 9 specialized roles (*Hacker, Street Racer, Fixer, Photographer, Entrepreneur, Detective, Smuggler, Freelancer, Custom*) with tailored Heat, Street Cred, and Bounty statistics.
-- 🌴 **Vice City Vibe Presets**: 6 dynamic lighting and tone presets (*Neon Nights, Ocean Drive, Downtown Heat, After Dark, Sunset Boulevard, Backstreet*) that influence aesthetic atmosphere and card styling.
+- 🌴 **Vice City Vibe Presets**: 6 dynamic lighting and tone presets (*Neon Nights, Ocean Drive, Downtown Heat, After Dark, Sunset Boulevard, Backstreet*) driving both the canvas color grading and interface styling.
 - 🏎️ **"Your Vice City Life" Lifestyle Activities**: Inspired by GTA VI lifestyle themes—select your character's evening route:
   - *Ride the Jet Ski* (Biscayne Bay water run)
   - *Visit the Local Deli* (Little Havana neighborhood exploration)
   - *Hit the Gym* (Muscle Beach iron session)
   - *Cruise the City* (Ocean Drive midnight boulevard run)
   - *Hang at the Docks* (Pier 42 covert after-hours cargo handoff)
+- 🎬 **Cinematic 2.2s Compilation Sequence**: A multi-phase transition with concentric radar spinners and ambient vibe-colored lighting that bridges editing into the final dossier reveal.
 - 🖼️ **Dual Visual Ingestion**: Upload custom photos (with client-side validation) or pick from 4 pre-loaded high-resolution starter characters (*Mia, Alex, Nova, Rio*).
-- 🪪 **Unclipped 1200×1600px High-Res Export**: Download a crisp 2x resolution PNG street dossier with barcode, district stamps, security verification, and metadata.
+- 🪪 **Decoupled 1200×1600px High-Res Export**: Download an unclipped, high-contrast 1200×1600px PNG street dossier card with barcode, district stamps, security verification, and preserved visual edits via client-side DOM serialization.
 - 📱 **Fully Responsive**: Seamless layout scaling from mobile viewports (375px+) to ultra-wide displays.
 
 ---
@@ -33,30 +36,55 @@ Create your neon Vice City underworld identity, customize your character portrai
 
 - **Framework**: [React 18](https://react.dev/) + [Vite 5](https://vitejs.dev/)
 - **Image Editing Engine**: [`@unlayer/react-image-editor`](https://www.npmjs.com/package/@unlayer/react-image-editor)
-- **Styling**: [Tailwind CSS](https://tailwindcss.com/) + Custom Cyber Synthwave Design System
+- **Styling**: [Tailwind CSS 3](https://tailwindcss.com/) + Custom Cyber Synthwave Design System
 - **Icons**: [Lucide React](https://lucide.dev/)
 - **Exporting**: [`html-to-image`](https://github.com/bubkoo/html-to-image)
 - **Effects**: [`canvas-confetti`](https://www.npmjs.com/package/canvas-confetti)
 
 ---
 
-## 🧠 How It Works
+## 🧠 How It Works: The 5-Step Journey
+
+```
+01: IDENTITY SETUP          02: VIBE PRE-GRADING          03: UNLAYER STUDIO
+Name, Role, Vibe,    ───►   Off-Screen 1200x1600   ───►   Stickers, Text, Frame,
+Route & Portrait            Canvas Filter & Blend         Crop & Custom Colors
+                                                                  │
+                                                                  ▼
+05: DOSSIER EXPORT          04: COMPILATION ENGINE
+1200x1600 Unclipped  ◄───   2.2s Multi-Phase Radar
+High-Res PNG Card           Identity Verification
+```
 
 1. **Step 1: Character Setup**: Configure your street operative's name, underworld alias, syndicate role, heat rating, ambient lighting vibe preset, and signature lifestyle activity.
-2. **Step 2: Visual Selection & Ingestion**: Pick from high-res starter operative portraits or upload your custom photograph (validated client-side).
+2. **Step 2: Visual Ingestion & Pre-Grading**: Pick from high-res starter operative portraits or upload your custom photograph. The engine converts the image to base64 and renders it onto an off-screen 1200×1600 canvas with vibe-specific 2D filters, vignette, and scanlines.
 3. **Step 3: Unlayer Image Studio**: Launch into the official `@unlayer/react-image-editor`. Apply neon filters, crop to composition, add custom typography taglines, and decorate with stickers/frames.
-4. **Step 4: Save & Compile Dossier**: On save, the edited canvas image is captured as a base64 Data URL and compiled into a classified Vice City dossier.
-5. **Step 5: High-Res Export**: Export a dedicated, unclipped 1200×1600px PNG dossier card via client-side DOM serialization.
+4. **Step 4: Save & Compile Dossier**: On save, the edited canvas image is captured as a base64 Data URL and compiled into a classified Vice City dossier during a 2.2s cinematic transition.
+5. **Step 5: High-Res Export**: Export a dedicated, unclipped 1200×1600px PNG dossier card via client-side DOM serialization (`html-to-image`) with guaranteed `(0, 0)` alignment and automated fallback.
 
 ---
 
 ## 🎨 React Image Editor Integration
 
 The Unlayer React Image Editor (`@unlayer/react-image-editor`) is the visual heartbeat of the experience:
+- **Two-Stage Ingestion Pipeline**:
+  - *Stage 1*: `ensureDataUrlWithVibe()` pre-grades the image on an off-screen canvas using custom 2D context filters (`contrast`, `saturate`, `hue-rotate`, `sepia`) and blend overlays.
+  - *Stage 2*: Pre-graded base image mounts directly into Unlayer's canvas, allowing the user to customize with native tools.
 - **Zero CORS / Iframe Conflicts**: Images are pre-converted to base64 Data URLs before mounting into the editor canvas, ensuring seamless cross-origin handling.
-- **Native Tools**: Features Unlayer's complete editing suite including Filters, Crop, Resize, Drawing, Text, Shapes, Stickers, and Frames.
-- **Theme Customization**: Styled with a dark studio theme matching Vice City's midnight aesthetic.
-- **Fail-Safe Persistence**: Saves output through Unlayer's native `onSave` event and fallback programmatic canvas getters.
+- **Native Suite**: Features Unlayer's complete editing suite including Filters, Crop, Resize, Drawing, Text, Shapes, Stickers, and Frames.
+- **Tri-State Lifecycle HUD**:
+  - `PREPARING IMAGE...` (Amber pulse): Off-screen canvas grading running.
+  - `LOADING CANVAS...` (Cyan pulse): Mounting Unlayer Image Editor instance.
+  - `CANVAS READY` (Neon green pulse): Unlayer canvas is fully interactive.
+- **Fail-Safe Persistence**: Saves output through Unlayer's native `onSave` event and fallback programmatic canvas getters (`editorRef.current.editor.getImage()`).
+
+---
+
+## 📚 Technical Documentation
+
+For in-depth architectural and structural details, refer to:
+- [**`ARCHITECTURE.md`**](./ARCHITECTURE.md): Comprehensive system specification, state machine lifecycle, identity DNA matrix, Unlayer integration pipeline, and export architecture.
+- [**`FILE_STRUCTURE.md`**](./FILE_STRUCTURE.md): Detailed repository layout, component breakdown, data schemas, utility APIs, and extension guides.
 
 ---
 
@@ -65,7 +93,7 @@ The Unlayer React Image Editor (`@unlayer/react-image-editor`) is the visual hea
 ### 1. Clone & Install
 
 ```bash
-git clone https://github.com/your-username/vice-city-character-studio.git
+git clone https://github.com/Viidhii19/vice-city-character-studio.git
 cd vice-city-character-studio
 npm install
 ```
@@ -76,7 +104,7 @@ npm install
 npm run dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) in your browser.
+Open [http://localhost:5173](http://localhost:5173) in your browser.
 
 ### 3. Production Build & Preview
 

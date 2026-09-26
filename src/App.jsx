@@ -3,11 +3,12 @@ import ProjectHeader from './components/ProjectHeader';
 import LandingHero from './components/LandingHero';
 import CharacterSetup from './components/CharacterSetup';
 import VisualEditor from './components/VisualEditor';
+import CompilationScreen from './components/CompilationScreen';
 import FinalResultScreen from './components/FinalResultScreen';
 import { demoCharacters } from './data/demoCharacters';
 
 export default function App() {
-  const [screen, setScreen] = useState('landing'); // 'landing' | 'setup' | 'editor' | 'result'
+  const [screen, setScreen] = useState('landing'); // 'landing' | 'setup' | 'editor' | 'compilation' | 'result'
   
   const [character, setCharacter] = useState({
     name: 'Mia Santos',
@@ -55,8 +56,13 @@ export default function App() {
 
   const handleEditorSave = ({ dataUrl }) => {
     setEditedImage(dataUrl);
-    setScreen('result');
+    setScreen('compilation');
     window.scrollTo({ top: 0, behavior: 'smooth' });
+    // Auto-advance after compilation animation completes (~2.2 s)
+    setTimeout(() => {
+      setScreen('result');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }, 2200);
   };
 
   const handleEditorCancel = () => {
@@ -128,6 +134,10 @@ export default function App() {
             onSave={handleEditorSave}
             onCancel={handleEditorCancel}
           />
+        )}
+
+        {screen === 'compilation' && (
+          <CompilationScreen character={character} />
         )}
 
         {screen === 'result' && (

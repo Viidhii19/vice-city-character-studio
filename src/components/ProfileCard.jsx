@@ -6,6 +6,7 @@ import {
 } from 'lucide-react';
 import { presets } from '../data/presets';
 import { activities } from '../data/activities';
+import { computeIdentityDNA } from '../lib/identity';
 
 export default function ProfileCard({ cardRef, character, editedImage }) {
   const activePreset = presets.find((p) => p.id === character.preset) || presets[0];
@@ -35,6 +36,9 @@ export default function ProfileCard({ cardRef, character, editedImage }) {
 
   // Visual image: prioritize edited image returned by Unlayer
   const displayImage = editedImage || character.image;
+
+  // Deterministic identity archetype from vibe + activity
+  const identityType = computeIdentityDNA(character.preset, character.activity);
 
   // Stable deterministic dossier serial
   const stableSerial = React.useMemo(() => {
@@ -173,6 +177,23 @@ export default function ProfileCard({ cardRef, character, editedImage }) {
         </div>
       </div>
 
+      {/* IDENTITY DNA */}
+      <div
+        className="relative z-10 p-2.5 rounded-xl border text-center mb-3"
+        style={{
+          borderColor: `${activePreset.accent}35`,
+          backgroundColor: `${activePreset.accent}08`,
+        }}
+      >
+        <div className="text-[8px] font-mono text-white/35 tracking-[0.25em] uppercase mb-0.5">COMPILED IDENTITY TYPE</div>
+        <div
+          className="text-xs font-syne font-black uppercase tracking-wider"
+          style={{ color: activePreset.accent }}
+        >
+          {identityType}
+        </div>
+      </div>
+
       {/* STATS MATRIX */}
       <div className="relative z-10 grid grid-cols-3 gap-2.5 p-3 rounded-2xl bg-black/50 border border-white/10 font-mono mb-4 text-center">
         
@@ -260,7 +281,9 @@ export default function ProfileCard({ cardRef, character, editedImage }) {
         {/* Date and Security stamp */}
         <div className="text-right">
           <div className="text-[9px] font-mono text-[#ff2a85] font-bold">VERIFIED DOSSIER</div>
-          <div className="text-[8px] font-mono text-white/40">SEPTEMBER 2026</div>
+          <div className="text-[8px] font-mono text-white/40">
+            {new Date().toLocaleString('en-US', { month: 'long', year: 'numeric' }).toUpperCase()}
+          </div>
         </div>
 
       </div>

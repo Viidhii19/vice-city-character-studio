@@ -36,6 +36,126 @@ export async function ensureDataUrl(imageSource) {
 }
 
 /**
+ * 2D Canvas context filters matching each Vibe ID from src/data/presets.js
+ */
+const VIBE_FILTERS = {
+  'neon-nights': 'contrast(1.25) saturate(1.6) hue-rotate(-25deg)',
+  'ocean-drive': 'sepia(0.35) saturate(1.45) brightness(1.1) contrast(1.05)',
+  'downtown-heat': 'contrast(1.35) sepia(0.4) saturate(0.85) brightness(0.95)',
+  'after-dark': 'brightness(0.75) contrast(1.4) hue-rotate(180deg) saturate(1.2)',
+  'sunset-boulevard': 'saturate(1.7) brightness(1.05) hue-rotate(15deg) contrast(1.1)',
+  'backstreet': 'grayscale(0.75) contrast(1.5) brightness(0.9)',
+};
+
+/**
+ * Converts imageSource to Base64 Data URL, applies vibe-specific 2D canvas grading,
+ * vignette, and scanline overlays on an off-screen 1200x1600 canvas (object-fit: cover),
+ * and returns the mutated PNG Base64 Data URL.
+ */
+export async function ensureDataUrlWithVibe(imageSource, vibeId) {
+  if (!imageSource) return null;
+
+  // Step 1: Resolve imageSource into Base64 Data URL to bypass CORS and tainted canvas issues
+  const base64DataUrl = await ensureDataUrl(imageSource);
+  if (!base64DataUrl) return null;
+
+  // Guard for non-browser environments
+  if (typeof document === 'undefined') {
+    return base64DataUrl;
+  }
+
+  return new Promise((resolve) => {
+    const img = new Image();
+    if (!base64DataUrl.startsWith('data:')) {
+      img.crossOrigin = 'anonymous';
+    }
+
+    img.onload = () => {
+      try {
+        const canvas = document.createElement('canvas');
+        const targetWidth = 1200;
+        const targetHeight = 1600;
+        canvas.width = targetWidth;
+        canvas.height = targetHeight;
+        const ctx = canvas.getContext('2d');
+
+        if (!ctx) {
+          resolve(base64DataUrl);
+          return;
+        }
+
+        // Object-fit: cover math ensuring no stretching
+        const imgWidth = img.naturalWidth || img.width || targetWidth;
+        const imgHeight = img.naturalHeight || img.height || targetHeight;
+        const imgRatio = imgWidth / imgHeight;
+        const canvasRatio = targetWidth / targetHeight; // 0.75
+
+        let drawWidth, drawHeight, offsetX, offsetY;
+        if (imgRatio > canvasRatio) {
+          // Image wider than canvas -> match height, crop width
+          drawHeight = targetHeight;
+          drawWidth = imgWidth * (targetHeight / imgHeight);
+          offsetX = (targetWidth - drawWidth) / 2;
+          offsetY = 0;
+        } else {
+          // Image taller than canvas -> match width, crop height
+          drawWidth = targetWidth;
+          drawHeight = imgHeight * (targetWidth / imgWidth);
+          offsetX = 0;
+          offsetY = (targetHeight - drawHeight) / 2;
+        }
+
+        // Apply custom 2D canvas context filter matching Vibe ID
+        const filterStr = VIBE_FILTERS[vibeId] || 'none';
+        ctx.filter = filterStr;
+
+        // Draw base image onto canvas
+        ctx.drawImage(img, offsetX, offsetY, drawWidth, drawHeight);
+        ctx.filter = 'none';
+
+        // Add subtle vignette and scanline overlays via Canvas 2D blend modes
+        ctx.save();
+        ctx.globalCompositeOperation = 'overlay';
+
+        // Vignette overlay
+        const maxRadius = Math.sqrt(Math.pow(targetWidth / 2, 2) + Math.pow(targetHeight / 2, 2));
+        const vignette = ctx.createRadialGradient(
+          targetWidth / 2, targetHeight / 2, targetWidth * 0.35,
+          targetWidth / 2, targetHeight / 2, maxRadius
+        );
+        vignette.addColorStop(0, 'rgba(0, 0, 0, 0)');
+        vignette.addColorStop(0.65, 'rgba(0, 0, 0, 0.25)');
+        vignette.addColorStop(1, 'rgba(0, 0, 0, 0.65)');
+        ctx.fillStyle = vignette;
+        ctx.fillRect(0, 0, targetWidth, targetHeight);
+
+        // Scanlines overlay
+        ctx.fillStyle = 'rgba(0, 0, 0, 0.08)';
+        for (let y = 0; y < targetHeight; y += 4) {
+          ctx.fillRect(0, y, targetWidth, 1.5);
+        }
+
+        ctx.restore();
+
+        // Resolve and return mutated base64 Data URL (image/png)
+        const mutatedDataUrl = canvas.toDataURL('image/png');
+        resolve(mutatedDataUrl);
+      } catch (err) {
+        console.warn('[ensureDataUrlWithVibe] Canvas grading error, falling back:', err);
+        resolve(base64DataUrl);
+      }
+    };
+
+    img.onerror = (err) => {
+      console.warn('[ensureDataUrlWithVibe] Image element failed to load:', err);
+      resolve(base64DataUrl);
+    };
+
+    img.src = base64DataUrl;
+  });
+}
+
+/**
  * Validates an uploaded image file
  */
 export function validateImageFile(file, maxSizeBytes = 15 * 1024 * 1024) {

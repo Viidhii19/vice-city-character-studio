@@ -37,8 +37,18 @@ export async function downloadElementAsPng(element, filename = 'vice-city-profil
     pixelRatio: 1, // Card is natively 1200x1600 high-res
     cacheBust: false,
     skipFonts: true, // Prevents SecurityError on cross-origin stylesheet rules
-    ...(inlineWidth  ? { width:  inlineWidth  } : {}),
-    ...(inlineHeight ? { height: inlineHeight } : {}),
+    backgroundColor: '#08070d',
+    width: inlineWidth || 1200,
+    height: inlineHeight || 1600,
+    style: {
+      left: '0px',
+      top: '0px',
+      position: 'relative',
+      transform: 'none',
+      opacity: '1',
+      visibility: 'visible',
+      display: 'flex',
+    },
     filter: (node) => {
       // Exclude elements with 'no-export' class
       if (node.classList && node.classList.contains('no-export')) {

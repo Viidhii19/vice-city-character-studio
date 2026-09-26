@@ -7,6 +7,7 @@ import {
 import { presets } from '../data/presets';
 import { activities } from '../data/activities';
 import { ensureDataUrl } from '../lib/image';
+import { computeIdentityDNA } from '../lib/identity';
 
 /**
  * ExportProfileCard — Fixed 1200×1600px off-screen card for PNG download.
@@ -41,12 +42,13 @@ export default function ExportProfileCard({ exportRef, character, editedImage })
   };
   const ActivityIcon = activityIcons[character.activity] || Car;
 
-  const [resolvedImage, setResolvedImage] = React.useState(editedImage || character.image);
+  const [resolvedImage, setResolvedImage] = React.useState(character.editedImage || editedImage || character.image);
 
   React.useEffect(() => {
     let active = true;
-    if (editedImage) {
-      setResolvedImage(editedImage);
+    const target = character.editedImage || editedImage;
+    if (target) {
+      setResolvedImage(target);
     } else if (character.image) {
       if (character.image.startsWith('data:')) {
         setResolvedImage(character.image);
@@ -57,9 +59,9 @@ export default function ExportProfileCard({ exportRef, character, editedImage })
       }
     }
     return () => { active = false; };
-  }, [editedImage, character.image]);
+  }, [character.editedImage, editedImage, character.image]);
 
-  const displayImage = resolvedImage || editedImage || character.image;
+  const displayImage = resolvedImage || character.editedImage || editedImage || character.image;
   const heatStars = Array.from({ length: 5 }, (_, i) => i < character.heat);
 
   // Stable deterministic dossier serial matching ProfileCard
@@ -73,6 +75,9 @@ export default function ExportProfileCard({ exportRef, character, editedImage })
     return Math.abs(hash % 9000) + 1000;
   }, [character.name, character.alias, character.role]);
 
+  // Deterministic identity archetype from vibe + activity
+  const identityType = computeIdentityDNA(character.preset, character.activity);
+
   // --- Shared inline style helpers ---
   const mono = { fontFamily: 'monospace' };
   const syne = { fontFamily: "'Syne', 'Outfit', 'Inter', sans-serif" };
@@ -83,8 +88,12 @@ export default function ExportProfileCard({ exportRef, character, editedImage })
       id="vice-city-export-card"
       style={{
         position: 'relative',
+        left: '0px',
+        top: '0px',
         width: '1200px',
         height: '1600px',
+        minWidth: '1200px',
+        minHeight: '1600px',
         overflow: 'hidden',
         fontFamily: "'Outfit', 'Inter', sans-serif",
         backgroundColor: '#08070d',
@@ -172,7 +181,6 @@ export default function ExportProfileCard({ exportRef, character, editedImage })
               src={displayImage}
               alt={character.name}
               style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
-              {...(!displayImage.startsWith('data:') ? { crossOrigin: 'anonymous' } : {})}
             />
           )}
           {/* Corner accent marks */}
@@ -248,6 +256,34 @@ export default function ExportProfileCard({ exportRef, character, editedImage })
               color: activePreset.accent, textTransform: 'uppercase', letterSpacing: '1px',
             }}>
               {activePreset.name}
+            </div>
+          </div>
+        </div>
+
+        {/* ── IDENTITY DNA ── */}
+        <div style={{
+          padding: '20px 28px',
+          borderRadius: '14px',
+          backgroundColor: `${activePreset.accent}10`,
+          border: `1px solid ${activePreset.accent}35`,
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+        }}>
+          <div>
+            <div style={{ ...mono, fontSize: '11px', color: 'rgba(255,255,255,0.35)', letterSpacing: '4px', textTransform: 'uppercase', marginBottom: '6px' }}>
+              COMPILED IDENTITY TYPE
+            </div>
+            <div style={{ ...syne, fontWeight: 900, fontSize: '22px', color: activePreset.accent, textTransform: 'uppercase', letterSpacing: '2px' }}>
+              {identityType}
+            </div>
+          </div>
+          <div style={{ textAlign: 'right' }}>
+            <div style={{ ...mono, fontSize: '11px', color: 'rgba(255,255,255,0.35)', letterSpacing: '3px', textTransform: 'uppercase', marginBottom: '6px' }}>
+              ROLE
+            </div>
+            <div style={{ ...mono, fontWeight: 700, fontSize: '16px', color: 'rgba(255,255,255,0.75)', textTransform: 'uppercase' }}>
+              {character.role}
             </div>
           </div>
         </div>
@@ -374,7 +410,7 @@ export default function ExportProfileCard({ exportRef, character, editedImage })
               Built with @unlayer/react-image-editor
             </div>
             <div style={{ ...mono, fontSize: '11px', color: activePreset.accent, marginTop: '2px' }}>
-              #BuiltWithImageEditor
+              #BuiltWithImageEditor &nbsp;·&nbsp; {new Date().toLocaleString('en-US', { month: 'long', year: 'numeric' }).toUpperCase()}
             </div>
           </div>
         </div>

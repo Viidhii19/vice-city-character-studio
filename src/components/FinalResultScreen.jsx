@@ -7,6 +7,9 @@ import {
 import ProfileCard from './ProfileCard';
 import ExportProfileCard from './ExportProfileCard';
 import { downloadElementAsPng, sanitizeFilename } from '../lib/download';
+import { presets } from '../data/presets';
+import { activities } from '../data/activities';
+import { computeIdentityDNA } from '../lib/identity';
 
 export default function FinalResultScreen({ character, editedImage, onEditAgain, onCreateAnother }) {
   // cardRef is the visible, responsive card (display only)
@@ -17,6 +20,19 @@ export default function FinalResultScreen({ character, editedImage, onEditAgain,
   const [downloadSuccess, setDownloadSuccess] = useState(false);
   const [exportError, setExportError] = useState(null);
   const [copied, setCopied] = useState(false);
+
+  // Identity data for the right-column compiled summary
+  const activePreset = presets.find(p => p.id === character.preset) || presets[0];
+  const identityType = computeIdentityDNA(character.preset, character.activity);
+  const stableSerial = React.useMemo(() => {
+    let hash = 0;
+    const str = `${character.name || 'citizen'}-${character.alias || 'ghost'}-${character.role || 'operative'}`;
+    for (let i = 0; i < str.length; i++) {
+      hash = ((hash << 5) - hash) + str.charCodeAt(i);
+      hash |= 0;
+    }
+    return Math.abs(hash % 9000) + 1000;
+  }, [character.name, character.alias, character.role]);
 
   // Trigger celebration confetti on mount
   useEffect(() => {
@@ -33,21 +49,33 @@ export default function FinalResultScreen({ character, editedImage, onEditAgain,
   }, []);
 
   const handleDownload = async () => {
-    if (!exportRef.current) return;
+    const targetNode = exportRef.current || cardRef.current;
+    if (!targetNode) return;
     try {
       setDownloading(true);
       setExportError(null);
       const safeName = sanitizeFilename(character.name || 'operative');
       const filename = `vice-city-profile-${safeName}.png`;
-      // Target the fixed-size off-screen export card, NOT the responsive visible card
-      const dataUrl = await downloadElementAsPng(exportRef.current, filename);
+      const dataUrl = await downloadElementAsPng(targetNode, filename);
       if (typeof window !== 'undefined' && dataUrl) {
         window.__lastExportedDataUrl = dataUrl;
       }
       setDownloadSuccess(true);
       setTimeout(() => setDownloadSuccess(false), 4000);
     } catch (err) {
-      console.error('Download error:', err);
+      console.error('Download error with exportRef, trying fallback:', err);
+      if (cardRef.current && targetNode !== cardRef.current) {
+        try {
+          const safeName = sanitizeFilename(character.name || 'operative');
+          const filename = `vice-city-profile-${safeName}.png`;
+          await downloadElementAsPng(cardRef.current, filename);
+          setDownloadSuccess(true);
+          setTimeout(() => setDownloadSuccess(false), 4000);
+          return;
+        } catch (fallbackErr) {
+          console.error('Fallback export also failed:', fallbackErr);
+        }
+      }
       setExportError('Export encountered an issue. You can right-click the card to save it or try again.');
     } finally {
       setDownloading(false);
@@ -81,19 +109,20 @@ export default function FinalResultScreen({ character, editedImage, onEditAgain,
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
 
-      {/* Hidden export card container — at (0,0) with opacity: 0 for full layout calculation */}
+      {/* Off-screen fixed 1200x1600 export card container */}
       <div
         aria-hidden="true"
         style={{
-          position: 'absolute',
+          position: 'fixed',
           top: 0,
-          left: 0,
+          left: '-99999px',
           width: '1200px',
           height: '1600px',
           overflow: 'hidden',
-          opacity: 0,
           pointerEvents: 'none',
-          zIndex: -50,
+          zIndex: -9999,
+          opacity: 1,
+          visibility: 'visible',
         }}
       >
         <ExportProfileCard
@@ -133,7 +162,24 @@ export default function FinalResultScreen({ character, editedImage, onEditAgain,
 
         {/* Right Column: Actions & Details */}
         <div className="lg:col-span-5 space-y-6">
-          
+          {/* Compiled Identity Summary — connects vibe+activity choices to the dossier */}
+          <div
+            className="glass-panel p-4 rounded-2xl border"
+            style={{ borderColor: `${activePreset.accent}40` }}
+          >
+            <div className="text-[10px] font-mono text-white/40 uppercase tracking-[0.2em] mb-2">COMPILED IDENTITY</div>
+            <div
+              className="font-syne font-black text-xl uppercase tracking-tight"
+              style={{ color: activePreset.accent }}
+            >
+              {identityType}
+            </div>
+            <div className="flex items-center justify-between mt-3 pt-2 border-t border-white/10 text-[10px] font-mono text-white/50">
+              <span>{character.name || 'OPERATIVE'}&nbsp;&middot;&nbsp;{character.role}</span>
+              <span style={{ color: activePreset.accent }}>SER: VC-{stableSerial}</span>
+            </div>
+          </div>
+
           {/* Main Action Box */}
           <div className="glass-panel p-6 rounded-2xl border border-white/10 space-y-4">
             <h2 className="font-syne font-bold text-lg text-white flex items-center gap-2">

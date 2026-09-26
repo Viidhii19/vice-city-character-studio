@@ -6,7 +6,7 @@ import {
   Crop, Type, Sliders, Smile, Frame, PenTool, RefreshCw
 } from 'lucide-react';
 import { presets } from '../data/presets';
-import { ensureDataUrl } from '../lib/image';
+import { ensureDataUrlWithVibe } from '../lib/image';
 
 export default function VisualEditor({ character, onSave, onCancel }) {
   const editorRef = useRef(null);
@@ -18,14 +18,14 @@ export default function VisualEditor({ character, onSave, onCancel }) {
 
   const activePreset = presets.find((p) => p.id === character.preset) || presets[0];
 
-  // Convert relative / external image sources to base64 Data URLs
+  // Convert relative / external image sources to base64 Data URLs with vibe grading
   // This guarantees smooth canvas operation without CORS or relative iframe path issues.
   useEffect(() => {
     let isCancelled = false;
     setPreparingImage(true);
     setEditorError(null);
 
-    ensureDataUrl(character.image)
+    ensureDataUrlWithVibe(character.image, character.preset)
       .then((dataUrl) => {
         if (!isCancelled) {
           setPreparedImage(dataUrl || character.image);
@@ -43,7 +43,7 @@ export default function VisualEditor({ character, onSave, onCancel }) {
     return () => {
       isCancelled = true;
     };
-  }, [character.image]);
+  }, [character.image, character.preset]);
 
   const handleEditorSave = ({ dataUrl, blob }) => {
     setIsSaving(true);
@@ -143,9 +143,23 @@ export default function VisualEditor({ character, onSave, onCancel }) {
             <div className="text-xs font-mono text-white/50 flex items-center gap-2 mt-0.5">
               <span>UNLAYER ENGINE // REACT IMAGE EDITOR</span>
               <span className="text-white/20">•</span>
-              <span className="text-[#00ff88] flex items-center gap-1">
-                <span className="w-1.5 h-1.5 rounded-full bg-[#00ff88] animate-pulse" />
-                CANVAS READY
+              <span
+                className="flex items-center gap-1 transition-colors duration-300"
+                style={{
+                  color: editorLoaded ? '#00ff88' : preparingImage ? '#fbbf24' : '#00f0ff',
+                }}
+              >
+                <span
+                  className="w-1.5 h-1.5 rounded-full animate-pulse transition-colors duration-300"
+                  style={{
+                    backgroundColor: editorLoaded ? '#00ff88' : preparingImage ? '#fbbf24' : '#00f0ff',
+                  }}
+                />
+                {preparingImage
+                  ? 'PREPARING IMAGE...'
+                  : editorLoaded
+                  ? 'CANVAS READY'
+                  : 'LOADING CANVAS...'}
               </span>
             </div>
           </div>
@@ -244,7 +258,16 @@ export default function VisualEditor({ character, onSave, onCancel }) {
               <button
                 onClick={() => {
                   setEditorError(null);
-                  setPreparedImage(character.image);
+                  setPreparingImage(true);
+                  ensureDataUrlWithVibe(character.image, character.preset)
+                    .then((dataUrl) => {
+                      setPreparedImage(dataUrl || character.image);
+                      setPreparingImage(false);
+                    })
+                    .catch(() => {
+                      setPreparedImage(character.image);
+                      setPreparingImage(false);
+                    });
                 }}
                 className="text-xs font-mono px-3 py-1 rounded bg-white/10 hover:bg-white/20 text-white"
               >
