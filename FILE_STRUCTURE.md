@@ -48,10 +48,12 @@ vice-city-character-studio/
     │   ├── CompilationScreen.jsx                # Multi-phase 2.2s cinematic compilation transition
     │   ├── ExportProfileCard.jsx                # Fixed 1200×1600px off-screen card for PNG export
     │   ├── FinalResultScreen.jsx                # Dossier presentation, download, share & celebration
+    │   ├── IdentityReplayModal.jsx              # 6-step cinematic transformation timeline modal
     │   ├── LandingHero.jsx                      # Cinematic landing hero & quick-start demo cards
     │   ├── ProfileCard.jsx                      # Responsive on-screen operative dossier card
     │   ├── ProjectHeader.jsx                    # Top navigation bar with screen indicators & reset
-    │   └── VisualEditor.jsx                     # @unlayer/react-image-editor integration container
+    │   ├── SharedIdentityView.jsx               # Dedicated read-only public identity view for shared links
+    │   └── VisualEditor.jsx                     # @unlayer/react-image-editor container with calibration missions
     │
     ├── data/                                    # Static game lore & identity dataset
     │   ├── activities.js                        # 5 Vice City lifestyle activities & routes
@@ -61,8 +63,9 @@ vice-city-character-studio/
     │
     └── lib/                                     # Utility functions and helper modules
         ├── download.js                          # html-to-image DOM serialization & PNG download
-        ├── identity.js                          # 30-combination deterministic Identity DNA matrix
-        └── image.js                             # Canvas 2D vibe grading, base64 converter & validation
+        ├── identity.js                          # 30-combination deterministic Identity DNA matrix & visual stats
+        ├── image.js                             # Canvas 2D vibe grading, base64 converter & validation
+        └── share.js                             # Zero-backend URL encoder/decoder, social links & clipboard
 ```
 
 ---

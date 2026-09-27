@@ -7,7 +7,7 @@ import {
 import { presets } from '../data/presets';
 import { activities } from '../data/activities';
 import { ensureDataUrl } from '../lib/image';
-import { computeIdentityDNA } from '../lib/identity';
+import { computeIdentityDNA, computeVisualDNAStats } from '../lib/identity';
 
 /**
  * ExportProfileCard — Fixed 1200×1600px off-screen card for PNG download.
@@ -19,6 +19,7 @@ import { computeIdentityDNA } from '../lib/identity';
 export default function ExportProfileCard({ exportRef, character, editedImage }) {
   const activePreset = presets.find((p) => p.id === character.preset) || presets[0];
   const activeActivity = activities.find((a) => a.id === character.activity) || activities[3];
+  const visualDNA = computeVisualDNAStats(character.preset, character.activity, character);
 
   const roleIcons = {
     Hacker: Terminal,
@@ -295,35 +296,60 @@ export default function ExportProfileCard({ exportRef, character, editedImage })
           </div>
         </div>
 
-        {/* ── IDENTITY DNA ── */}
+        {/* ── IDENTITY DNA & VISUAL TELEMETRY ── */}
         <div style={{
           padding: '20px 28px',
           borderRadius: '14px',
           backgroundColor: `${activePreset.accent}10`,
           border: `1px solid ${activePreset.accent}35`,
           display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'space-between',
+          flexDirection: 'column',
+          gap: '14px',
         }}>
-          <div>
-            <div style={{ ...mono, fontSize: '11px', color: 'rgba(255,255,255,0.35)', letterSpacing: '4px', textTransform: 'uppercase', marginBottom: '6px' }}>
-              COMPILED IDENTITY TYPE
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+            <div>
+              <div style={{ ...mono, fontSize: '11px', color: 'rgba(255,255,255,0.35)', letterSpacing: '4px', textTransform: 'uppercase', marginBottom: '6px' }}>
+                COMPILED IDENTITY TYPE
+              </div>
+              <div style={{ ...syne, fontWeight: 900, fontSize: '22px', color: activePreset.accent, textTransform: 'uppercase', letterSpacing: '2px' }}>
+                {identityType}
+              </div>
             </div>
-            <div style={{ ...syne, fontWeight: 900, fontSize: '22px', color: activePreset.accent, textTransform: 'uppercase', letterSpacing: '2px' }}>
-              {identityType}
+            <div style={{ textAlign: 'right' }}>
+              <div style={{ ...mono, fontSize: '11px', color: 'rgba(255,255,255,0.35)', letterSpacing: '3px', textTransform: 'uppercase', marginBottom: '6px' }}>
+                ROLE
+              </div>
+              <div style={{ ...mono, fontWeight: 700, fontSize: '16px', color: 'rgba(255,255,255,0.75)', textTransform: 'uppercase' }}>
+                {character.role}
+              </div>
             </div>
           </div>
-          <div style={{ textAlign: 'right' }}>
-            <div style={{ ...mono, fontSize: '11px', color: 'rgba(255,255,255,0.35)', letterSpacing: '3px', textTransform: 'uppercase', marginBottom: '6px' }}>
-              ROLE
-            </div>
-            <div style={{ ...mono, fontWeight: 700, fontSize: '16px', color: 'rgba(255,255,255,0.75)', textTransform: 'uppercase' }}>
-              {character.role}
-            </div>
+
+          {/* Visual DNA Attributes Bar Readout */}
+          <div style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(5, 1fr)',
+            gap: '12px',
+            paddingTop: '12px',
+            borderTop: '1px solid rgba(255,255,255,0.08)',
+          }}>
+            {visualDNA.map((stat) => (
+              <div key={stat.label} style={{ textAlign: 'center' }}>
+                <div style={{ ...mono, fontSize: '9px', color: 'rgba(255,255,255,0.4)', letterSpacing: '1px' }}>
+                  {stat.label}
+                </div>
+                <div style={{ ...mono, fontSize: '13px', fontWeight: 700, color: activePreset.accent, marginTop: '2px' }}>
+                  {stat.value}%
+                </div>
+                <div style={{ ...mono, fontSize: '8px', color: 'rgba(255,255,255,0.25)', marginTop: '2px', letterSpacing: '-1px' }}>
+                  {stat.bar}
+                </div>
+              </div>
+            ))}
           </div>
         </div>
 
-        {/* ── ACTIVITY & LOCATION ── */}
+        {/* ── ACTIVITY & LOCATION (ENVIRONMENTAL CONSEQUENCE) ── */}
         <div style={{
           display: 'flex', alignItems: 'center', justifyContent: 'space-between',
           padding: '24px 32px', borderRadius: '16px',
@@ -343,6 +369,10 @@ export default function ExportProfileCard({ exportRef, character, editedImage })
             <div style={{ ...syne, fontWeight: 700, fontSize: '26px', color: '#ffffff' }}>
               {activeActivity.title}
             </div>
+            {/* Environmental Route Stamp */}
+            <div style={{ ...mono, fontSize: '11px', color: activePreset.accent, letterSpacing: '2px', marginTop: '6px', opacity: 0.9 }}>
+              {activeActivity.routeStamp || `ROUTE // ${activeActivity.location?.toUpperCase()} • SEC-07`}
+            </div>
           </div>
           <div style={{ textAlign: 'right' }}>
             <div style={{
@@ -353,6 +383,9 @@ export default function ExportProfileCard({ exportRef, character, editedImage })
             </div>
             <div style={{ ...mono, fontWeight: 700, fontSize: '20px', color: activePreset.accent }}>
               {activePreset.location || activeActivity.location}
+            </div>
+            <div style={{ ...mono, fontSize: '11px', color: 'rgba(255,255,255,0.4)', marginTop: '4px', letterSpacing: '1px' }}>
+              CIRCUIT // {activeActivity.circuit || 'NIGHT CIRCUIT'}
             </div>
           </div>
         </div>

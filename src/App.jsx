@@ -1,14 +1,17 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import ProjectHeader from './components/ProjectHeader';
 import LandingHero from './components/LandingHero';
 import CharacterSetup from './components/CharacterSetup';
 import VisualEditor from './components/VisualEditor';
 import CompilationScreen from './components/CompilationScreen';
 import FinalResultScreen from './components/FinalResultScreen';
+import SharedIdentityView from './components/SharedIdentityView';
 import { demoCharacters } from './data/demoCharacters';
+import { decodeIdentityFromUrl } from './lib/share';
 
 export default function App() {
-  const [screen, setScreen] = useState('landing'); // 'landing' | 'setup' | 'editor' | 'compilation' | 'result'
+  const [screen, setScreen] = useState('landing'); // 'landing' | 'setup' | 'editor' | 'compilation' | 'result' | 'shared'
+  const [sharedCharacter, setSharedCharacter] = useState(null);
   
   const [character, setCharacter] = useState({
     name: 'Mia Santos',
@@ -24,6 +27,37 @@ export default function App() {
   });
 
   const [editedImage, setEditedImage] = useState(null);
+
+  // Check URL on initial load for shareable identity link
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    try {
+      const params = new URLSearchParams(window.location.search);
+      const encodedId = params.get('id');
+      const serialParam = params.get('serial');
+      if (encodedId) {
+        const decoded = decodeIdentityFromUrl(encodedId);
+        if (decoded) {
+          if (serialParam) decoded.serial = serialParam.replace(/^VC-/, '');
+          setSharedCharacter(decoded);
+          setScreen('shared');
+          return;
+        }
+      }
+      // Check /identity/:serial path structure
+      const pathMatch = window.location.pathname.match(/\/identity\/([^/?#]+)/);
+      if (pathMatch && encodedId) {
+        const decoded = decodeIdentityFromUrl(encodedId);
+        if (decoded) {
+          decoded.serial = pathMatch[1].replace(/^VC-/, '');
+          setSharedCharacter(decoded);
+          setScreen('shared');
+        }
+      }
+    } catch (e) {
+      console.warn('Error reading share URL parameters:', e);
+    }
+  }, []);
 
   // Navigation handlers
   const handleStart = () => {
@@ -146,6 +180,19 @@ export default function App() {
             editedImage={editedImage}
             onEditAgain={handleEditAgain}
             onCreateAnother={handleCreateAnother}
+          />
+        )}
+
+        {screen === 'shared' && sharedCharacter && (
+          <SharedIdentityView
+            character={sharedCharacter}
+            onCreateOwn={() => {
+              if (typeof window !== 'undefined' && window.history && window.history.pushState) {
+                window.history.pushState({}, '', window.location.pathname.replace(/\/identity\/.*$/, '') || '/');
+              }
+              setScreen('setup');
+              window.scrollTo({ top: 0, behavior: 'smooth' });
+            }}
           />
         )}
       </main>

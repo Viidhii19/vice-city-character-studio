@@ -16,7 +16,24 @@ export default function VisualEditor({ character, onSave, onCancel }) {
   const [preparedImage, setPreparedImage] = useState(null);
   const [preparingImage, setPreparingImage] = useState(true);
 
+  const [missions, setMissions] = useState({
+    1: 'CONFIRMED', // Frame The Subject (auto-centered framing initialized)
+    2: 'CONFIRMED', // Apply Your Look (vibe color-grading applied)
+    3: 'PENDING',   // Leave Your Mark (text/drawing/stickers)
+  });
+  const [calibrationVerified, setCalibrationVerified] = useState(false);
+
   const activePreset = presets.find((p) => p.id === character.preset) || presets[0];
+
+  const toggleMission = (id) => {
+    setMissions((prev) => {
+      const current = prev[id];
+      const next = current === 'CONFIRMED' ? 'PENDING' : 'CONFIRMED';
+      return { ...prev, [id]: next };
+    });
+  };
+
+  const completedCount = Object.values(missions).filter((s) => s === 'CONFIRMED').length;
 
   // Convert relative / external image sources to base64 Data URLs with vibe grading
   // This guarantees smooth canvas operation without CORS or relative iframe path issues.
@@ -46,14 +63,16 @@ export default function VisualEditor({ character, onSave, onCancel }) {
   }, [character.image, character.preset]);
 
   const handleEditorSave = ({ dataUrl, blob }) => {
+    setCalibrationVerified(true);
     setIsSaving(true);
     setTimeout(() => {
       onSave({ dataUrl, blob });
-    }, 450);
+    }, 1400);
   };
 
   const handleManualSave = () => {
     try {
+      setCalibrationVerified(true);
       setIsSaving(true);
       let targetUrl = preparedImage || character.image;
       if (editorRef.current && editorRef.current.editor) {
@@ -64,12 +83,12 @@ export default function VisualEditor({ character, onSave, onCancel }) {
       }
       setTimeout(() => {
         onSave({ dataUrl: targetUrl });
-      }, 450);
+      }, 1400);
     } catch (err) {
       console.error('Error during manual save:', err);
       setTimeout(() => {
         onSave({ dataUrl: preparedImage || character.image });
-      }, 450);
+      }, 1400);
     }
   };
 
@@ -185,7 +204,7 @@ export default function VisualEditor({ character, onSave, onCancel }) {
             {isSaving ? (
               <>
                 <div className="w-3.5 h-3.5 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                <span>COMPILING DOSSIER...</span>
+                <span>CALIBRATING DOSSIER...</span>
               </>
             ) : (
               <>
@@ -198,13 +217,172 @@ export default function VisualEditor({ character, onSave, onCancel }) {
 
       </div>
 
+      {/* Visual Calibration Mission Panel */}
+      <div className="glass-panel p-4 rounded-2xl border border-white/10 space-y-3">
+        <div className="flex items-center justify-between flex-wrap gap-2 pb-2 border-b border-white/10 text-xs font-mono">
+          <div className="flex items-center gap-2">
+            <span className="w-2 h-2 rounded-full bg-[#00f0ff] animate-ping" />
+            <span className="text-[#00f0ff] font-bold tracking-widest uppercase">
+              VISUAL CALIBRATION
+            </span>
+            <span className="text-white/40">// CREATIVE DIRECTIVES</span>
+          </div>
+
+          {/* Progress Indicator */}
+          <div className="flex items-center gap-2 text-[11px]">
+            <span className="text-white/60">CALIBRATION:</span>
+            <span className="text-[#ff2a85] font-bold tracking-wider">
+              {completedCount === 3 ? '● ● ● 3 / 3' : completedCount === 2 ? '● ● ○ 2 / 3' : '● ○ ○ 1 / 3'}
+            </span>
+            <span className={`px-2 py-0.5 rounded text-[10px] font-bold ${completedCount === 3 ? 'bg-[#00ff88]/20 text-[#00ff88] border border-[#00ff88]/40' : 'bg-white/10 text-white/70'}`}>
+              {completedCount === 3 ? 'ALL CONFIRMED' : 'ACTIVE'}
+            </span>
+          </div>
+        </div>
+
+        {/* 3 Mission Cards */}
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+          {/* MISSION 01 */}
+          <div
+            onClick={() => toggleMission(1)}
+            className={`p-3 rounded-xl border transition-all cursor-pointer flex flex-col justify-between gap-2 ${
+              missions[1] === 'CONFIRMED'
+                ? 'bg-[#00f0ff]/10 border-[#00f0ff]/40 shadow-sm'
+                : 'bg-white/5 border-white/10 hover:border-white/20'
+            }`}
+            title="Click to toggle confirmation"
+          >
+            <div className="flex items-center justify-between">
+              <span className="font-mono text-[10px] text-white/50">MISSION 01</span>
+              <span className={`text-[9px] font-mono font-bold px-1.5 py-0.5 rounded ${missions[1] === 'CONFIRMED' ? 'bg-[#00f0ff]/20 text-[#00f0ff]' : 'bg-white/10 text-white/40'}`}>
+                {missions[1] === 'CONFIRMED' ? 'USER CONFIRMED' : 'NOT STARTED'}
+              </span>
+            </div>
+            <div>
+              <div className="font-syne font-bold text-xs text-white flex items-center gap-1.5">
+                <Crop className="w-3.5 h-3.5 text-[#00f0ff]" />
+                <span>FRAME THE SUBJECT</span>
+              </div>
+              <p className="text-[11px] text-white/60 font-mono mt-0.5 leading-snug">
+                Recompose framing using Unlayer crop & resize tools.
+              </p>
+            </div>
+          </div>
+
+          {/* MISSION 02 */}
+          <div
+            onClick={() => toggleMission(2)}
+            className={`p-3 rounded-xl border transition-all cursor-pointer flex flex-col justify-between gap-2 ${
+              missions[2] === 'CONFIRMED'
+                ? 'bg-[#ff2a85]/10 border-[#ff2a85]/40 shadow-sm'
+                : 'bg-white/5 border-white/10 hover:border-white/20'
+            }`}
+            title="Click to toggle confirmation"
+          >
+            <div className="flex items-center justify-between">
+              <span className="font-mono text-[10px] text-white/50">MISSION 02</span>
+              <span className={`text-[9px] font-mono font-bold px-1.5 py-0.5 rounded ${missions[2] === 'CONFIRMED' ? 'bg-[#ff2a85]/20 text-[#ff5ea7]' : 'bg-white/10 text-white/40'}`}>
+                {missions[2] === 'CONFIRMED' ? 'USER CONFIRMED' : 'NOT STARTED'}
+              </span>
+            </div>
+            <div>
+              <div className="font-syne font-bold text-xs text-white flex items-center gap-1.5">
+                <Sliders className="w-3.5 h-3.5 text-[#ff2a85]" />
+                <span>APPLY YOUR LOOK</span>
+              </div>
+              <p className="text-[11px] text-white/60 font-mono mt-0.5 leading-snug">
+                Establish atmosphere with filters and visual grading.
+              </p>
+            </div>
+          </div>
+
+          {/* MISSION 03 */}
+          <div
+            onClick={() => toggleMission(3)}
+            className={`p-3 rounded-xl border transition-all cursor-pointer flex flex-col justify-between gap-2 ${
+              missions[3] === 'CONFIRMED'
+                ? 'bg-[#00ff88]/10 border-[#00ff88]/40 shadow-sm'
+                : 'bg-white/5 border-white/10 hover:border-white/20'
+            }`}
+            title="Click to toggle confirmation"
+          >
+            <div className="flex items-center justify-between">
+              <span className="font-mono text-[10px] text-white/50">MISSION 03</span>
+              <span className={`text-[9px] font-mono font-bold px-1.5 py-0.5 rounded ${missions[3] === 'CONFIRMED' ? 'bg-[#00ff88]/20 text-[#00ff88]' : 'bg-white/10 text-white/40'}`}>
+                {missions[3] === 'CONFIRMED' ? 'USER CONFIRMED' : 'NOT STARTED'}
+              </span>
+            </div>
+            <div>
+              <div className="font-syne font-bold text-xs text-white flex items-center gap-1.5">
+                <Type className="w-3.5 h-3.5 text-[#00ff88]" />
+                <span>LEAVE YOUR MARK</span>
+              </div>
+              <p className="text-[11px] text-white/60 font-mono mt-0.5 leading-snug">
+                Add text, drawing, stickers, or high-tech frames.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+
       {/* Editor Main Canvas Frame */}
-      <div className="relative rounded-2xl border-2 border-white/15 overflow-hidden shadow-2xl bg-[#0b0a12] min-h-[640px] flex flex-col">
+      <div className="relative rounded-2xl border-2 border-white/15 overflow-hidden shadow-2xl bg-[#0b0a12] min-h-[600px] flex flex-col">
         
         {/* Subtle Cyber scanline & corner accents */}
         <div className="absolute top-2 left-2 z-20 pointer-events-none text-[10px] font-mono text-[#00f0ff]/80 bg-black/70 px-2 py-0.5 rounded border border-white/10">
           HUD // UNLAYER CANVAS 1080P
         </div>
+
+        {/* Calibration Complete Verification State Overlay */}
+        {calibrationVerified && (
+          <div className="absolute inset-0 z-40 flex flex-col items-center justify-center bg-[#07060e]/95 backdrop-blur-md text-white p-6 space-y-5 animate-fade-in">
+            <div className="relative w-16 h-16">
+              <div className="absolute inset-0 rounded-full border-2 border-white/10" />
+              <div className="absolute inset-0 rounded-full border-2 border-[#00ff88] border-t-transparent animate-spin" />
+              <div className="absolute inset-2 rounded-full border-2 border-[#ff2a85] border-b-transparent animate-spin" style={{ animationDirection: 'reverse', animationDuration: '1.2s' }} />
+            </div>
+
+            <div className="text-center space-y-1">
+              <div className="flex items-center justify-center gap-1.5 text-xs font-mono text-[#00ff88] uppercase tracking-widest">
+                <ShieldCheck className="w-4 h-4 text-[#00ff88]" />
+                <span>CALIBRATION PROTOCOL</span>
+              </div>
+              <h2 className="font-syne font-black text-2xl sm:text-3xl text-white uppercase tracking-tight">
+                VISUAL CALIBRATION COMPLETE
+              </h2>
+            </div>
+
+            {/* Verification Telemetry Checklist */}
+            <div className="w-full max-w-sm bg-black/70 rounded-xl border border-white/15 p-4 font-mono text-xs space-y-2.5">
+              <div className="flex items-center justify-between border-b border-white/10 pb-2">
+                <span className="text-white/60">IMAGE STATUS</span>
+                <span className="text-[#00ff88] font-bold flex items-center gap-1">
+                  <Check className="w-3.5 h-3.5" /> VERIFIED
+                </span>
+              </div>
+              <div className="flex items-center justify-between border-b border-white/10 pb-2">
+                <span className="text-white/60">VISUAL EDIT</span>
+                <span className="text-[#00f0ff] font-bold flex items-center gap-1">
+                  <Check className="w-3.5 h-3.5" /> DETECTED
+                </span>
+              </div>
+              <div className="flex items-center justify-between border-b border-white/10 pb-2">
+                <span className="text-white/60">IDENTITY DNA</span>
+                <span className="text-[#ff2a85] font-bold flex items-center gap-1">
+                  <Check className="w-3.5 h-3.5" /> UPDATED
+                </span>
+              </div>
+              <div className="flex items-center justify-between pt-1">
+                <span className="text-white/60">CALIBRATION</span>
+                <span className="text-white font-bold tracking-wider">██████████ 100%</span>
+              </div>
+            </div>
+
+            <div className="flex items-center gap-2 font-mono text-xs text-[#00f0ff] animate-pulse">
+              <span>DOSSIER READY // COMMENCING COMPILATION SEQUENCE</span>
+            </div>
+          </div>
+        )}
 
         {/* High-Tech Compiling State Overlay */}
         {isSaving && (

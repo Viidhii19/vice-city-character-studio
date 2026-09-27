@@ -6,7 +6,7 @@ import {
 } from 'lucide-react';
 import { presets } from '../data/presets';
 import { activities } from '../data/activities';
-import { computeIdentityDNA } from '../lib/identity';
+import { computeIdentityDNA, computeVisualDNAStats } from '../lib/identity';
 
 export default function ProfileCard({ cardRef, character, editedImage }) {
   const activePreset = presets.find((p) => p.id === character.preset) || presets[0];
@@ -39,6 +39,7 @@ export default function ProfileCard({ cardRef, character, editedImage }) {
 
   // Deterministic identity archetype from vibe + activity
   const identityType = computeIdentityDNA(character.preset, character.activity);
+  const visualDNA = computeVisualDNAStats(character.preset, character.activity, character);
 
   // Stable deterministic dossier serial
   const stableSerial = React.useMemo(() => {
@@ -177,6 +178,9 @@ export default function ProfileCard({ cardRef, character, editedImage }) {
               <div className="text-xs font-syne font-bold text-white">
                 {activeActivity.title}
               </div>
+              <div className="text-[8px] font-mono text-[#00f0ff]/80 truncate mt-0.5">
+                {activeActivity.routeStamp || `ROUTE // ${activeActivity.location?.toUpperCase()}`}
+              </div>
             </div>
           </div>
           <div className="text-right">
@@ -184,11 +188,14 @@ export default function ProfileCard({ cardRef, character, editedImage }) {
             <div className="text-[10px] font-mono font-semibold" style={{ color: activePreset.accent }}>
               {activePreset.location || activeActivity.location}
             </div>
+            <div className="text-[8px] font-mono text-white/30 truncate mt-0.5">
+              {activeActivity.circuit || 'NIGHT CIRCUIT'}
+            </div>
           </div>
         </div>
       </div>
 
-      {/* IDENTITY DNA */}
+      {/* IDENTITY DNA & VISUAL TELEMETRY */}
       <div
         className="relative z-10 p-2.5 rounded-xl border text-center mb-3"
         style={{
@@ -202,6 +209,15 @@ export default function ProfileCard({ cardRef, character, editedImage }) {
           style={{ color: activePreset.accent }}
         >
           {identityType}
+        </div>
+        {/* Compact Visual DNA Attribute Readout */}
+        <div className="flex items-center justify-center gap-2 pt-1.5 mt-1 border-t border-white/5 text-[8px] font-mono text-white/50 flex-wrap">
+          {visualDNA.map((dna) => (
+            <span key={dna.label} className="inline-flex items-center gap-0.5">
+              <span className="text-white/40">{dna.label}:</span>
+              <span className="font-bold" style={{ color: activePreset.accent }}>{dna.value}%</span>
+            </span>
+          ))}
         </div>
       </div>
 
